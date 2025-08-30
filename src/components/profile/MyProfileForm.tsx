@@ -1,6 +1,6 @@
 "use client";
-import { Box, Button, FormControl, TextInput, Textarea, Checkbox } from "@primer/react";
-import { useEffect, useState } from "react";
+import { Button, FormControl, TextInput, Textarea, Checkbox } from "@primer/react";
+import { useEffect, useState, type FormEvent } from "react";
 import type { ProfileOwnerDto, ProfileUpdateRequest } from "@/src/lib/types/profile";
 import { useUpdateMyProfile } from "@/src/lib/queries/profile";
 
@@ -26,7 +26,7 @@ export function MyProfileForm({ me }: { me: ProfileOwnerDto }) {
   ) => setForm((s) => ({ ...s, [k]: v }));
 
   return (
-    <Box as="form" sx={{ display: "grid", gap: 3 }} onSubmit={(e) => { e.preventDefault(); m.mutate(form); }}>
+    <form style={{ display: "grid", gap: 16 }} onSubmit={(e: FormEvent<HTMLFormElement>) => { e.preventDefault(); m.mutate(form); }}>
       <FormControl>
         <FormControl.Label>Display name</FormControl.Label>
         <TextInput value={form.displayName ?? ""} onChange={(e) => onChange("displayName", e.target.value)} />
@@ -47,12 +47,16 @@ export function MyProfileForm({ me }: { me: ProfileOwnerDto }) {
         <FormControl.Label>Language</FormControl.Label>
         <TextInput value={form.language ?? ""} onChange={(e) => onChange("language", e.target.value)} />
       </FormControl>
-      <Checkbox
-        checked={!!form.isPublic}
-        onChange={(e) => onChange("isPublic", e.target.checked)}
-      >Public profile</Checkbox>
+      <FormControl>
+        <Checkbox
+          id="isPublic"
+          checked={!!form.isPublic}
+          onChange={(e) => onChange("isPublic", e.target.checked)}
+        />
+        <FormControl.Label htmlFor="isPublic">Public profile</FormControl.Label>
+      </FormControl>
 
       <Button type="submit" variant="primary" loading={m.isPending}>Save changes</Button>
-    </Box>
+    </form>
   );
 }
