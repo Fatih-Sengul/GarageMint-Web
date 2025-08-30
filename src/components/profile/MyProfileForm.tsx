@@ -1,8 +1,8 @@
 "use client";
 import { Button, FormControl, TextInput, Textarea, Checkbox } from "@primer/react";
 import { useEffect, useState, type FormEvent } from "react";
-import type { ProfileOwnerDto, ProfileUpdateRequest } from "@/src/lib/types/profile";
-import { useUpdateMyProfile } from "@/src/lib/queries/profile";
+import type { ProfileOwnerDto, ProfileUpdateRequest } from "@/lib/types/profile";
+import { useUpdateMyProfile } from "@/lib/queries/profile";
 
 export function MyProfileForm({ me }: { me: ProfileOwnerDto }) {
   const [form, setForm] = useState<ProfileUpdateRequest>({});

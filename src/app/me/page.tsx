@@ -1,8 +1,8 @@
 "use client";
-import { useInitMyProfile, useMyProfile } from "@/src/lib/queries/profile";
+import { useInitMyProfile, useMyProfile } from "@/lib/queries/profile";
 import { Box, PageLayout, Button } from "@primer/react";
-import { MyProfileHeader } from "@/src/components/profile/MyProfileHeader";
-import { MyProfileForm } from "@/src/components/profile/MyProfileForm";
+import { MyProfileHeader } from "@/components/profile/MyProfileHeader";
+import { MyProfileForm } from "@/components/profile/MyProfileForm";
 
 export default function MePage() {
   const { data, isLoading, isError } = useMyProfile();

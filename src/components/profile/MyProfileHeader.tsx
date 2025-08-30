@@ -1,7 +1,7 @@
 "use client";
 import { Avatar, Button, Text, Label, TextInput } from "@primer/react";
 import { useState } from "react";
-import { useUpdateMyAvatar, useUpdateMyBanner } from "@/src/lib/queries/profile";
+import { useUpdateMyAvatar, useUpdateMyBanner } from "@/lib/queries/profile";
 
 export function MyProfileHeader(props: {
   username: string;

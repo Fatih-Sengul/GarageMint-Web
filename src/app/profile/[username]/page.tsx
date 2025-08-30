@@ -1,5 +1,5 @@
 "use client";
-import { usePublicProfile } from "@/src/lib/queries/profile";
+import { usePublicProfile } from "@/lib/queries/profile";
 import { Box, Avatar, Label, Text } from "@primer/react";
 
 export default function PublicProfilePage({ params }: { params: { username: string } }) {
