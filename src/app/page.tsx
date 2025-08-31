@@ -1,103 +1,231 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import Link from "next/link";
+import {
+    UserCircleIcon,
+    MagnifyingGlassIcon,
+    RocketLaunchIcon,
+    ShieldCheckIcon,
+    FireIcon,
+    StarIcon,
+} from "@heroicons/react/24/outline";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+// Örnek "trend" verileri (dummy)
+const trending = [
+    { id: 1, title: "Nissan Skyline GT-R R34", brand: "Hot Wheels", price: "₺6.499", img: "https://picsum.photos/seed/diecast1/1200/800" },
+    { id: 2, title: "Porsche 911 GT3 RS", brand: "Tarmac Works", price: "₺4.999", img: "https://picsum.photos/seed/diecast2/1200/800" },
+    { id: 3, title: "Honda NSX Type-R", brand: "INNO64", price: "₺4.299", img: "https://picsum.photos/seed/diecast3/1200/800" },
+    { id: 4, title: "Toyota Supra MK4", brand: "Hot Wheels Premium", price: "₺5.299", img: "https://picsum.photos/seed/diecast4/1200/800" },
+];
+
+export default function HomePage() {
+    return (
+        <div className="min-h-screen bg-white text-gray-900 dark:bg-neutral-950 dark:text-neutral-100">
+            {/* NAVBAR */}
+            <header className="sticky top-0 z-50 backdrop-blur bg-white/70 dark:bg-neutral-950/70 border-b border-black/10 dark:border-white/10">
+                <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
+                    {/* Marka */}
+                    <Link href="/" className="flex items-center gap-2" aria-label="Anasayfa">
+                        <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-500" />
+                        <span className="font-extrabold tracking-tight text-xl">GarageMint</span>
+                    </Link>
+
+                    {/* Orta menü */}
+                    <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-600 dark:text-neutral-300">
+                        <Link className="hover:text-black dark:hover:text-white" href="/listings">Keşfet</Link>
+                        <Link className="hover:text-black dark:hover:text-white" href="/collections">Koleksiyonlar</Link>
+                        <Link className="hover:text-black dark:hover:text-white" href="/sell">Satış Yap</Link>
+                        <Link className="hover:text-black dark:hover:text-white" href="/about">Hakkımızda</Link>
+                    </nav>
+
+                    {/* Sağ aksiyonlar */}
+                    <div className="flex items-center gap-3">
+                        <label className="hidden sm:flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 px-3 py-1.5">
+                            <MagnifyingGlassIcon className="h-4 w-4 opacity-70" aria-hidden />
+                            <input
+                                placeholder="Modeller, markalar ara…"
+                                className="bg-transparent outline-none text-sm w-48"
+                                aria-label="Arama"
+                            />
+                        </label>
+                        <Link
+                            href="/me"
+                            className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/10"
+                            title="Profilim"
+                            aria-label="Profilim"
+                        >
+                            <UserCircleIcon className="h-5 w-5" aria-hidden />
+                            <span className="hidden sm:inline">Profilim</span>
+                        </Link>
+                    </div>
+                </div>
+            </header>
+
+            {/* HERO */}
+            <section className="relative border-b border-black/10 dark:border-white/10">
+                <div
+                    className="h-[520px] bg-cover bg-center"
+                    style={{
+                        backgroundImage:
+                            "linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.6)), url('https://images.unsplash.com/photo-1520975922284-5f7f83a43dfd?q=80&w=1800&auto=format&fit=crop')",
+                    }}
+                    aria-hidden
+                />
+                <div className="absolute inset-0 grid place-items-center">
+                    <div className="mx-auto max-w-6xl px-4 text-white">
+                        {/* Yaratıcı, kapsayıcı etiket */}
+                        <span className="inline-flex items-center rounded-full bg-emerald-500/90 px-3 py-1 text-xs font-bold tracking-wide">
+              Koleksiyonunu Vitrine Çıkar • Güvenle Ticaret Yap • Topluluğa Katıl
+            </span>
+
+                        <h1 className="mt-4 text-4xl sm:text-6xl font-extrabold leading-tight tracking-tight">
+                            Premium die-cast koleksiyonunu
+                            <br className="hidden sm:block" /> inşa et, sergile ve takas et.
+                        </h1>
+
+                        <p className="mt-3 max-w-2xl text-base sm:text-lg opacity-90">
+                            GarageMint: Sadece minyatür değil, <b>hikâye</b>. Sınırlı üretimler, nadir parçalar ve
+                            koleksiyoner kalitesinde ilanlar tek bir yerde.
+                        </p>
+
+                        <div className="mt-6 flex flex-wrap items-center gap-3">
+                            {/* İstenen şekilde: butonda SADECE bu metin */}
+                            <Link
+                                href="/listings"
+                                className="inline-flex items-center justify-center rounded-lg bg-black text-white dark:bg-white dark:text-black px-4 py-2 text-sm font-semibold hover:opacity-90"
+                            >
+                                Takasları Gör
+                            </Link>
+
+                            <Link
+                                href="/me"
+                                className="inline-flex items-center gap-2 rounded-lg border border-white/60 px-4 py-2 text-sm font-semibold hover:bg-white/10"
+                            >
+                                <RocketLaunchIcon className="h-4 w-4" aria-hidden />
+                                Profil Oluştur
+                            </Link>
+                        </div>
+
+                        {/* Tematik rozetler – görsel zenginlik */}
+                        <div className="mt-5 space-y-2">
+                            <div className="flex flex-wrap gap-2">
+                                {["Sınırlı Üretim", "Nadir Parçalar", "Özel Seri", "Mint Durum", "Collector Grade"].map((b) => (
+                                    <span
+                                        key={b}
+                                        className="rounded-full border border-white/50 bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur"
+                                    >
+                    {b}
+                  </span>
+                                ))}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {["JDM", "Euro", "USDM", "Klasik", "Ralli", "Supercar"].map((b) => (
+                                    <span
+                                        key={b}
+                                        className="rounded-full border border-white/50 bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur"
+                                    >
+                    {b}
+                  </span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* DEĞER ÖNERİLERİ */}
+            <section className="mx-auto max-w-6xl px-4 py-14">
+                <h2 className="text-3xl font-extrabold">Neden GarageMint?</h2>
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Feature
+                        icon={<ShieldCheckIcon className="h-5 w-5" aria-hidden />}
+                        title="Doğrulanmış profiller"
+                        desc="Topluluk güveni için doğrulanmış satıcılar ve koleksiyoner rozetleri."
+                    />
+                    <Feature
+                        icon={<FireIcon className="h-5 w-5" aria-hidden />}
+                        title="Trend yayınlar"
+                        desc="Nadir modeller, sınırlı üretimler ve sıcak ‘drop’lar akışta öne çıkar."
+                    />
+                    <Feature
+                        icon={<StarIcon className="h-5 w-5" aria-hidden />}
+                        title="Profesyonel ilanlar"
+                        desc="Zengin kartlar, galeri, etiketler, marka/seri bilgileri ve daha fazlası."
+                    />
+                </div>
+            </section>
+
+            {/* TREND GRID */}
+            <section className="mx-auto max-w-6xl px-4 pb-16">
+                <div className="mb-4 flex items-center justify-between">
+                    <h2 className="text-3xl font-extrabold">Şu an trend olanlar</h2>
+                    <Link
+                        href="/listings"
+                        className="text-sm font-semibold text-gray-600 dark:text-neutral-300 hover:text-black dark:hover:text-white"
+                    >
+                        Tümünü gör →
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {trending.map((t) => (
+                        <article
+                            key={t.id}
+                            className="group overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900"
+                        >
+                            <div className="relative">
+                                <img
+                                    src={t.img}
+                                    alt={`${t.brand} – ${t.title}`}
+                                    className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                                />
+                                <span className="absolute top-2 left-2 rounded-md bg-emerald-500/90 text-white text-xs font-bold px-2 py-1">
+                  {t.brand}
+                </span>
+                            </div>
+                            <div className="p-4">
+                                <h3 className="font-bold">{t.title}</h3>
+                                <p className="text-sm text-gray-600 dark:text-neutral-400">{t.price}</p>
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            </section>
+
+            {/* FOOTER */}
+            <footer className="border-t border-black/10 dark:border-white/10 py-8">
+                <div className="mx-auto max-w-6xl px-4 flex items-center justify-between flex-wrap gap-3 text-sm text-gray-600 dark:text-neutral-400">
+                    <p>© {new Date().getFullYear()} GarageMint</p>
+                    <nav className="flex gap-4">
+                        <Link href="/terms" className="hover:text-black dark:hover:text-white">Şartlar</Link>
+                        <Link href="/privacy" className="hover:text-black dark:hover:text-white">Gizlilik</Link>
+                        <Link href="/about" className="hover:text-black dark:hover:text-white">Hakkımızda</Link>
+                    </nav>
+                </div>
+            </footer>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    );
+}
+
+/* --------- Yardımcı Bileşen --------- */
+function Feature({
+                     icon,
+                     title,
+                     desc,
+                 }: {
+    icon: React.ReactNode;
+    title: string;
+    desc: string;
+}) {
+    return (
+        <div className="rounded-2xl border border-black/10 dark:border-white/10 p-5 bg-white dark:bg-neutral-900">
+            <div className="flex items-center gap-3">
+                <div className="grid h-9 w-9 place-items-center rounded-full border border-black/10 dark:border-white/10">
+                    {icon}
+                </div>
+                <h3 className="font-bold">{title}</h3>
+            </div>
+            <p className="mt-2 text-sm text-gray-600 dark:text-neutral-400">{desc}</p>
+        </div>
+    );
 }

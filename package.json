@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@primer/octicons-react": "^19.16.0",
     "@primer/primitives": "^11.1.0",
     "@primer/react": "^37.31.0",
