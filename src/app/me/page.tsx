@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useInitMyProfile, useMyProfile } from "@/lib/queries/profile";
+import { useMyProfile, useInitMyProfile } from "@/lib/queries/profile";
+
 import ProfileHeader from "@/components/me/ProfileHeader";
 import ProfileForm from "@/components/me/ProfileForm";
 import PrefsForm from "@/components/me/PrefsForm";
@@ -10,65 +11,100 @@ import MyStats from "@/components/me/MyStats";
 import MyListingsGrid from "@/components/me/MyListingsGrid";
 
 export default function MePage() {
-    const { data, isLoading, isError, error } = useMyProfile();
+    const { data, isLoading, isError } = useMyProfile();
     const init = useInitMyProfile();
 
     if (isLoading) {
-        return <div className="p-6">Yükleniyor…</div>;
-    }
-
-    if (isError || !data) {
-        const msg =
-            error instanceof Error ? error.message : "Bilinmeyen hata. API / CORS / URL’leri kontrol et.";
         return (
-            <div className="p-6 grid gap-3">
-                <div className="text-red-600 font-semibold">Profil yüklenemedi.</div>
-                <pre className="text-xs opacity-70">{msg}</pre>
-                <button
-                    onClick={() => init.mutate()}
-                    disabled={init.isPending}
-                    className="w-fit rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
-                >
-                    Profilimi Başlat
-                </button>
+            <div className="mx-auto max-w-6xl px-4 py-10">
+                <div className="text-sm text-neutral-400">Yükleniyor…</div>
             </div>
         );
     }
 
+    // Profil yoksa başlat
+    if (isError || !data) {
+        return (
+            <div className="mx-auto max-w-3xl px-4 py-16 grid gap-4">
+                <h1 className="text-2xl font-bold">Profil bulunamadı</h1>
+                <p className="text-neutral-400">
+                    Henüz bir profiliniz yok gibi görünüyor. Aşağıdaki butona tıklayarak
+                    oluşturabilirsiniz.
+                </p>
+                <button
+                    onClick={() => init.mutate()}
+                    disabled={init.isPending}
+                    className="w-fit rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2 text-white disabled:opacity-60"
+                >
+                    {init.isPending ? "Oluşturuluyor…" : "Profilimi Başlat"}
+                </button>
+
+                <Link href="/" className="text-sm text-neutral-400 hover:text-neutral-200">
+                    ← Anasayfa
+                </Link>
+            </div>
+        );
+    }
+
+    // --------- VERİ VAR ---------
     const me = data;
 
     return (
-        <div className="mx-auto max-w-6xl px-4 py-6 grid gap-6">
-            {/* Breadcrumb */}
-            <div className="flex items-center justify-between">
-                <nav className="text-sm">
-                    <Link className="text-sky-700 dark:text-sky-300 hover:underline" href="/">
-                        Anasayfa
-                    </Link>
-                    <span className="mx-2 text-neutral-400">/</span>
-                    <span className="text-neutral-600 dark:text-neutral-300 font-semibold">Profilim</span>
-                </nav>
+        <div className="mx-auto max-w-6xl px-4 py-6">
+            {/* Breadcrumbs */}
+            <nav className="mb-4 text-sm">
+                <Link href="/" className="text-sky-400 hover:underline">
+                    Anasayfa
+                </Link>
+                <span className="mx-2 text-neutral-500">/</span>
+                <span className="text-neutral-300">Profilim</span>
+            </nav>
+
+            {/* Üst kısım: Header + İstatistikler */}
+            <div className="grid gap-6">
+                <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-0 overflow-hidden">
+                    <ProfileHeader
+                        username={me.username}
+                        displayName={me.displayName}
+                        avatarUrl={me.avatarUrl}
+                        bannerUrl={me.bannerUrl}
+                        isVerified={me.isVerified ?? false}
+                    />
+                </section>
+
+                <section>
+                    <MyStats me={me} />
+                </section>
             </div>
 
-            {/* Header + Stats */}
-            <ProfileHeader
-                username={me.username}
-                displayName={me.displayName}
-                avatarUrl={me.avatarUrl}
-                bannerUrl={me.bannerUrl}
-                isVerified={me.isVerified}
-            />
-            <MyStats me={me} />
-
-            {/* Forms */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Ana içerik: 2 kolon */}
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Sol kolon */}
                 <div className="lg:col-span-2 grid gap-6">
-                    <ProfileForm me={me} />
-                    <MyListingsGrid me={me} />
+                    {/* Profil Bilgileri */}
+                    <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-6">
+                        <h2 className="text-xl font-semibold mb-4">Profil Bilgileri</h2>
+                        <ProfileForm me={me} />
+                    </section>
+
+                    {/* İlanlarım */}
+                    <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-6">
+                        <h2 className="text-xl font-semibold mb-4">İlanlarım</h2>
+                        <MyListingsGrid me={me} />
+                    </section>
                 </div>
-                <div className="grid gap-6">
-                    <PrefsForm me={me} />
-                    <NotificationsForm me={me} />
+
+                {/* Sağ kolon */}
+                <div className="lg:col-span-1 grid gap-6">
+                    <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-6">
+                        <h2 className="text-xl font-semibold mb-4">Tercihler</h2>
+                        <PrefsForm me={me} />
+                    </section>
+
+                    <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-6">
+                        <h2 className="text-xl font-semibold mb-4">Bildirimler</h2>
+                        <NotificationsForm me={me} />
+                    </section>
                 </div>
             </div>
         </div>
