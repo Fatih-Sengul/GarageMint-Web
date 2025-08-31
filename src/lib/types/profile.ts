@@ -103,8 +103,8 @@ export interface ProfileUpdateRequest {
     isPublic?: boolean | null;
 }
 
-export interface ProfilePrefsUpdateRequest extends ProfilePrefsDto {}
-export interface NotificationSettingsUpdateRequest extends NotificationSettingsDto {}
+export type ProfilePrefsUpdateRequest = ProfilePrefsDto;
+export type NotificationSettingsUpdateRequest = NotificationSettingsDto;
 
 export interface UsernameAvailabilityDto { available: boolean; }
 export interface UsernameSuggestionsDto { candidates: string[]; }
