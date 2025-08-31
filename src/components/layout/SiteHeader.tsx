@@ -18,7 +18,7 @@ export default function SiteHeader() {
                 <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-neutral-600 dark:text-neutral-300">
                     <Link className="hover:text-neutral-900 dark:hover:text-white" href="/listings">Keşfet</Link>
                     <Link className="hover:text-neutral-900 dark:hover:text-white" href="/collections">Koleksiyonlar</Link>
-                    <Link className="hover:text-neutral-900 dark:hover:text-white" href="/sell">Satış Yap</Link>
+                    <Link className="hover:text-neutral-900 dark:hover:text-white" href="/sell">Satış</Link>
                     <Link className="hover:text-neutral-900 dark:hover:text-white" href="/about">Hakkımızda</Link>
                 </nav>
 
