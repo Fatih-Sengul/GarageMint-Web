@@ -9,6 +9,7 @@ const MAX_SIZE = 8 * 1024 * 1024;
 export default function AuctionNewPage() {
   const r = useRouter();
   const mCreate = useCreateAuction();
+  const mUpload = useUploadAuctionImages();
   const [files, setFiles] = useState<File[]>([]);
   const uploaderRef = useRef<HTMLInputElement|null>(null);
 
@@ -51,12 +52,9 @@ export default function AuctionNewPage() {
       location: form.location || undefined,
     });
 
-    /* eslint-disable react-hooks/rules-of-hooks */
     if (created?.id && files.length) {
-      const mUpload = useUploadAuctionImages(created.id);
-      await mUpload.mutateAsync(files);
+      await mUpload.mutateAsync({ id: created.id, files });
     }
-    /* eslint-enable react-hooks/rules-of-hooks */
     r.push(`/auctions/${created.id}`);
   };
 
