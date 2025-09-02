@@ -35,16 +35,23 @@ export const useCreateAuction = () => {
   });
 };
 
-export const useUploadAuctionImages = () =>
-  useMutation({
-    mutationFn: async ({ id, files }: { id: number; files: File[] }) => {
+export const useUploadAuctionImages = () => {
+  const qc = useQueryClient();
+  return useMutation<UploadResult[], unknown, { id: number; files: File[] }>({
+    mutationFn: async ({ id, files }) => {
       const fd = new FormData();
       files.forEach((f) => fd.append("files", f));
-      return (await api.post(`/auctions/${id}/images`, fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })).data as UploadResult[];
+      return (
+        await api.post(`/auctions/${id}/images`, fd, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+      ).data as UploadResult[];
+    },
+    onSuccess: (_, { id }) => {
+      qc.invalidateQueries({ queryKey: ["auction", id] });
     },
   });
+};
 
 export const usePlaceBid = (id: number) => {
   const qc = useQueryClient();
