@@ -1,37 +1,44 @@
+"use client";
 import Link from "next/link";
-import AuctionTimer from "./AuctionTimer";
-import { formatTRY } from "@/lib/format";
-import type { AuctionListItemDto } from "@/lib/types/auction";
+import { AuctionListItemDto } from "@/lib/types/auction";
+import { formatCountdown } from "@/lib/utils/time";
+import { trAuctionStatus } from "@/lib/utils/i18n";
 
 export default function AuctionCard({ a }: { a: AuctionListItemDto }) {
+  const highest = a.highestBidAmount ?? "-";
+  const cover = a.coverUrl ?? `https://picsum.photos/seed/auction${a.id}/1200/800`;
+
   return (
     <Link
       href={`/auctions/${a.id}`}
-      className="group block overflow-hidden rounded-2xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-md transition-shadow"
+      className="group overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 shadow-sm hover:shadow-md transition-shadow"
     >
-      {/* Görsel - şimdilik placeholder */}
       <div className="relative">
         <img
-          src={`https://picsum.photos/seed/auction-${a.id}/800/480`}
-          alt="Auction"
-          className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          src={cover}
+          alt={`auction-${a.id}`}
+          className="h-56 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
         />
-        <span className="absolute top-2 left-2 rounded-md bg-neutral-900/80 text-white text-xs font-bold px-2 py-1">
-          #{a.id}
+        {/* Üst şerit: Kalan süre */}
+        <span className="absolute top-3 left-3 rounded-md bg-black/70 px-2 py-1 text-xs font-semibold text-emerald-300 ring-1 ring-white/10">
+          {formatCountdown(a.endsAt)}
+        </span>
+        {/* Sağ üst: durum */}
+        <span className="absolute top-3 right-3 rounded-md bg-white/10 px-2 py-1 text-xs font-semibold ring-1 ring-white/10">
+          {trAuctionStatus(a.status)}
         </span>
       </div>
 
-      <div className="p-4 grid gap-1">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-neutral-500 dark:text-neutral-400">Başlangıç</span>
-          <span className="font-semibold">{formatTRY(a.startPrice)}</span>
+      <div className="p-4 grid gap-1 text-sm">
+        <div className="flex items-center justify-between">
+          <span className="text-neutral-400">Başlangıç</span>
+          <span className="font-bold">{Number(a.startPrice).toFixed(2)} {a.currency}</span>
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-neutral-500 dark:text-neutral-400">En yüksek</span>
-          <span className="font-semibold">{a.highestBidAmount ? formatTRY(a.highestBidAmount) : "-"}</span>
-        </div>
-        <div className="pt-2">
-          <AuctionTimer endsAt={a.endsAt} />
+        <div className="flex items-center justify-between">
+          <span className="text-neutral-400">En yüksek</span>
+          <span className="font-bold">
+            {highest === "-" ? "-" : `${Number(highest).toFixed(2)} ${a.currency}`}
+          </span>
         </div>
       </div>
     </Link>
