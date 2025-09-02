@@ -2,72 +2,58 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import type {
-  AuctionListItemDto,
-  AuctionResponseDto,
-  BidResponseDto,
-  BidCreateRequest,
-  AuctionCreateRequest,
+  AuctionListItemDto, AuctionResponseDto,
+  BidResponseDto, AuctionCreateRequest, BidCreateRequest, UploadResult
 } from "@/lib/types/auction";
 
-const AUCTIONS = "auctions";
-
-export function useAuctions() {
-  return useQuery({
-    queryKey: [AUCTIONS, "list"],
-    queryFn: async () => {
-      const { data } = await api.get<AuctionListItemDto[]>("/auctions");
-      return data;
-    },
-    staleTime: 10_000,
+export const useAuctions = () =>
+  useQuery<AuctionListItemDto[]>({
+    queryKey: ["auctions"],
+    queryFn: async () => (await api.get("/auctions")).data,
   });
-}
 
-export function useAuction(id: number, refetchMs?: number) {
-  return useQuery({
-    queryKey: [AUCTIONS, "detail", id],
-    queryFn: async () => {
-      const { data } = await api.get<AuctionResponseDto>(`/auctions/${id}`);
-      return data;
-    },
-    refetchInterval: refetchMs,
+export const useAuction = (id: number) =>
+  useQuery<AuctionResponseDto>({
+    queryKey: ["auction", id],
+    queryFn: async () => (await api.get(`/auctions/${id}`)).data,
+    enabled: !!id,
   });
-}
 
-export function useAuctionBids(id: number, refetchMs?: number) {
-  return useQuery({
-    queryKey: [AUCTIONS, "bids", id],
-    queryFn: async () => {
-      const { data } = await api.get<BidResponseDto[]>(`/auctions/${id}/bids`);
-      return data;
-    },
-    refetchInterval: refetchMs,
+export const useBids = (id: number) =>
+  useQuery<BidResponseDto[]>({
+    queryKey: ["auction-bids", id],
+    queryFn: async () => (await api.get(`/auctions/${id}/bids`)).data,
+    enabled: !!id,
   });
-}
 
-export function usePlaceBid(id: number) {
+export const useCreateAuction = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: BidCreateRequest) => {
-      const { data } = await api.post<BidResponseDto>(`/auctions/${id}/bids`, payload);
-      return data;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: [AUCTIONS, "detail", id] });
-      qc.invalidateQueries({ queryKey: [AUCTIONS, "bids", id] });
-      qc.invalidateQueries({ queryKey: [AUCTIONS, "list"] });
+    mutationFn: async (body: AuctionCreateRequest) =>
+      (await api.post("/auctions", body)).data as AuctionResponseDto,
+    onSuccess: () => qc.invalidateQueries({ queryKey:["auctions"] }),
+  });
+};
+
+export const useUploadAuctionImages = (id: number) =>
+  useMutation({
+    mutationFn: async (files: File[]) => {
+      const fd = new FormData();
+      files.forEach((f) => fd.append("files", f));
+      return (await api.post(`/auctions/${id}/images`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })).data as UploadResult[];
     },
   });
-}
 
-export function useCreateAuction() {
+export const usePlaceBid = (id: number) => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: AuctionCreateRequest) => {
-      const { data } = await api.post<AuctionResponseDto>("/auctions", payload);
-      return data;
-    },
+    mutationFn: async (body: BidCreateRequest) =>
+      (await api.post(`/auctions/${id}/bids`, body)).data as BidResponseDto,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: [AUCTIONS, "list"] });
-    },
+      qc.invalidateQueries({ queryKey:["auction", id] });
+      qc.invalidateQueries({ queryKey:["auction-bids", id] });
+    }
   });
-}
+};
