@@ -35,9 +35,9 @@ export const useCreateAuction = () => {
   });
 };
 
-export const useUploadAuctionImages = (id: number) =>
+export const useUploadAuctionImages = () =>
   useMutation({
-    mutationFn: async (files: File[]) => {
+    mutationFn: async ({ id, files }: { id: number; files: File[] }) => {
       const fd = new FormData();
       files.forEach((f) => fd.append("files", f));
       return (await api.post(`/auctions/${id}/images`, fd, {
