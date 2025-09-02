@@ -7,6 +7,7 @@ import type {
     ProfilePrefsDto, ProfilePrefsUpdateRequest,
     NotificationSettingsDto, NotificationSettingsUpdateRequest,
     ProfileLinkDto, UsernameAvailabilityDto, UsernameSuggestionsDto,
+    FollowListResponse,
 } from "@/lib/types/profile";
 
 export const qk = {
@@ -23,13 +24,6 @@ export function useMyProfile() {
     return useQuery<ProfileOwnerDto>({
         queryKey: qk.me,
         queryFn: async () => (await api.get("/profiles/me")).data,
-    });
-}
-export function usePublicProfile(username: string) {
-    return useQuery<ProfilePublicDto>({
-        queryKey: qk.public(username),
-        queryFn: async () => (await api.get(`/profiles/${encodeURIComponent(username)}`)).data,
-        enabled: !!username,
     });
 }
 export function useCheckUsername(u: string) {
@@ -139,6 +133,82 @@ export function useUploadMyBanner() {
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: qk.me });
         },
+    });
+}
+
+// ---- FOLLOW / UNFOLLOW ----
+export function useFollow(username: string) {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: async () => {
+            await api.post(`/profiles/${encodeURIComponent(username)}/follow`);
+        },
+        onSuccess: () => {
+            // public profil ve followers/following listelerini tazele
+            qc.invalidateQueries({ queryKey: ["profile-public", username] });
+            qc.invalidateQueries({ queryKey: ["followers", username] });
+            qc.invalidateQueries({ queryKey: ["following", username] });
+            qc.invalidateQueries({ queryKey: qk.me });
+        },
+    });
+}
+
+export function useUnfollow(username: string) {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: async () => {
+            await api.delete(`/profiles/${encodeURIComponent(username)}/follow`);
+        },
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ["profile-public", username] });
+            qc.invalidateQueries({ queryKey: ["followers", username] });
+            qc.invalidateQueries({ queryKey: ["following", username] });
+            qc.invalidateQueries({ queryKey: qk.me });
+        },
+    });
+}
+
+// ---- LİSTELER ----
+export function useFollowers(username: string, page = 0, size = 20) {
+    return useQuery({
+        queryKey: ["followers", username, page, size],
+        queryFn: async () => {
+            const { data } = await api.get<FollowListResponse>(
+                `/profiles/${encodeURIComponent(username)}/followers`,
+                { params: { page, size } }
+            );
+            return data;
+        },
+        enabled: !!username,
+    });
+}
+
+export function useFollowing(username: string, page = 0, size = 20) {
+    return useQuery({
+        queryKey: ["following", username, page, size],
+        queryFn: async () => {
+            const { data } = await api.get<FollowListResponse>(
+                `/profiles/${encodeURIComponent(username)}/following`,
+                { params: { page, size } }
+            );
+            return data;
+        },
+        enabled: !!username,
+    });
+}
+
+// ---- PUBLIC PROFİL (viewer destekli) ----
+export function usePublicProfile(username: string, viewerUserId?: number) {
+    return useQuery({
+        queryKey: ["profile-public", username, viewerUserId ?? null],
+        queryFn: async () => {
+            const { data } = await api.get<ProfilePublicDto>(
+                `/profiles/${encodeURIComponent(username)}`,
+                { params: viewerUserId ? { viewerUserId } : {} }
+            );
+            return data;
+        },
+        enabled: !!username,
     });
 }
 
