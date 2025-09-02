@@ -19,6 +19,7 @@ export default function SiteHeader() {
                     <Link className="hover:text-neutral-900 dark:hover:text-white" href="/listings">Keşfet</Link>
                     <Link className="hover:text-neutral-900 dark:hover:text-white" href="/collections">Koleksiyonlar</Link>
                     <Link className="hover:text-neutral-900 dark:hover:text-white" href="/sell">Satış</Link>
+                    <Link className="hover:text-neutral-900 dark:hover:text-white" href="/auctions">Mezat</Link>
                     <Link className="hover:text-neutral-900 dark:hover:text-white" href="/about">Hakkımızda</Link>
                 </nav>
 
