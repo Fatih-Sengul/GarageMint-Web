@@ -4,6 +4,7 @@ import { useAuction, useBids, usePlaceBid } from "@/lib/queries/auction";
 import { formatCountdown, formatDateTime } from "@/lib/utils/time";
 import { trAuctionStatus } from "@/lib/utils/i18n";
 import { useMemo, useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 export default function AuctionDetailPage() {
   const params = useParams(); // { id: "123" }
@@ -18,13 +19,20 @@ export default function AuctionDetailPage() {
     return base + 10; // 10 TL artış
   }, [auction]);
 
-  const [amount, setAmount] = useState<number>(0);
-  const inc = () => setAmount((v) => (v || minNext) + 10);
-  const dec = () => setAmount((v) => Math.max(minNext, (v || minNext) - 10));
+    const [amount, setAmount] = useState<number>(0);
+    const inc = () => setAmount((v) => (v || minNext) + 10);
+    const dec = () => setAmount((v) => Math.max(minNext, (v || minNext) - 10));
 
-  if (!auction) return null;
+    const imgs = (
+      auction?.images?.length
+        ? [...auction.images]
+        : [{ url: `https://picsum.photos/seed/au${id}/1600/900`, idx: 0 }]
+    ).sort((a, b) => a.idx - b.idx);
+    const [imgIdx, setImgIdx] = useState(0);
+    const prevImg = () => setImgIdx((i) => (i - 1 + imgs.length) % imgs.length);
+    const nextImg = () => setImgIdx((i) => (i + 1) % imgs.length);
 
-  const imgs = (auction.images?.length ? auction.images : [{ url: `https://picsum.photos/seed/au${id}/1600/900`, idx:0 }]);
+    if (!auction) return null;
 
   const submit = () => {
     const val = amount || minNext;
@@ -35,10 +43,24 @@ export default function AuctionDetailPage() {
     <div className="mx-auto max-w-6xl px-4 py-6 grid gap-6">
       {/* üst kısım: görsel kaydırıcı */}
       <section className="overflow-hidden rounded-2xl border border-white/10">
-        <div className="relative w-full overflow-x-auto snap-x snap-mandatory flex">
-          {imgs.sort((a,b)=>a.idx-b.idx).map((im) => (
-            <img key={im.idx} src={im.url} alt="" className="snap-center shrink-0 w-full h-72 sm:h-96 object-cover" />
-          ))}
+        <div className="relative w-full">
+          <img src={imgs[imgIdx]?.url} alt="" className="w-full h-72 sm:h-96 object-cover" />
+          {imgs.length > 1 && (
+            <>
+              <button
+                onClick={prevImg}
+                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1 text-white"
+              >
+                <ChevronLeftIcon className="h-6 w-6" />
+              </button>
+              <button
+                onClick={nextImg}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1 text-white"
+              >
+                <ChevronRightIcon className="h-6 w-6" />
+              </button>
+            </>
+          )}
           <span className="absolute top-3 left-3 rounded-md bg-black/70 px-2 py-1 text-xs font-semibold text-emerald-300 ring-1 ring-white/10">
             {formatCountdown(auction.endsAt)}
           </span>
