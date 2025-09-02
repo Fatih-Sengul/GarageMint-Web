@@ -20,7 +20,12 @@ export default function AuctionsPage() {
           <h1 className="text-2xl font-extrabold">Mezatlar</h1>
           <p className="text-sm text-neutral-500">Devam eden açık artırmalar</p>
         </div>
-        {/* İleri: /auctions/new eklenirse burada CTA olur */}
+        <Link
+          href="/auctions/new"
+          className="rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 px-4 py-2 text-sm font-semibold text-white"
+        >
+          Yeni Mezat
+        </Link>
       </header>
 
       {isLoading && <p className="text-sm text-neutral-400">Yükleniyor…</p>}
