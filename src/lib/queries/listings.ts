@@ -4,6 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import type { ListingResponseDto, Page } from "@/lib/types/listing";
 
+// Backend: GET /api/v1/cars/listings/me -> ListingResponseDto[]
+export interface MyListingMini {
+    id: number;
+    title: string;
+    images?: { url: string }[];
+    status?: "ACTIVE" | "SOLD" | "WITHDRAWN";
+    isActive?: boolean;
+}
+
 export const qkListings = {
     search: (key: string) => ["listings","search",key] as const,
     byId: (id: number) => ["listings","byId",id] as const,
@@ -80,5 +89,17 @@ export function useListingById(id: number) {
         },
         enabled: Number.isFinite(id),
         staleTime: 30_000,
+    });
+}
+
+export function useMyActiveListings() {
+    return useQuery({
+        queryKey: ["myListings", "active"],
+        queryFn: async () => {
+            const { data } = await api.get<MyListingMini[]>("/cars/listings/me");
+            // endpoint zaten aktifleri döndürüyor; yine de filtre kalsın:
+            return (data ?? []).filter((x) => x.status === "ACTIVE" && (x.isActive ?? true));
+        },
+        staleTime: 10_000,
     });
 }
