@@ -15,6 +15,7 @@ export type AuctionListItemDto = {
   endsAt: string;              // ISO
   // opsiyonel görsel
   coverUrl?: string | null;
+  sellerUsername?: string | null;
 };
 
 export type AuctionResponseDto = {

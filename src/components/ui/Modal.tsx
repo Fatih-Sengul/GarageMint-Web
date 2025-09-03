@@ -1,29 +1,31 @@
 "use client";
-import { useEffect } from "react";
+import React from "react";
 
 export default function Modal({
-  open, onClose, title, children,
-}: { open: boolean; onClose: () => void; title?: string; children: React.ReactNode }) {
-
-  useEffect(() => {
-    const onEsc = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onEsc);
-    return () => document.removeEventListener("keydown", onEsc);
-  }, [onClose]);
-
+  open,
+  onClose,
+  title,
+  children,
+}: {
+  open: boolean;
+  onClose: () => void;
+  title?: string;
+  children: React.ReactNode;
+}) {
   if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-[60]">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="absolute inset-0 grid place-items-center p-4">
-        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-neutral-900 shadow-lg">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-            <h3 className="font-semibold">{title}</h3>
-            <button onClick={onClose} className="text-sm text-neutral-400 hover:text-neutral-200">Kapat</button>
-          </div>
-          <div className="p-4">{children}</div>
+    <div className="fixed inset-0 z-50">
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+        aria-hidden
+      />
+      <div className="absolute left-1/2 top-1/2 w-[95vw] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-neutral-900 p-4 shadow-xl">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-base font-semibold">{title}</h3>
+          <button onClick={onClose} className="text-sm text-neutral-400 hover:text-neutral-200">Kapat</button>
         </div>
+        <div className="max-h-[60vh] overflow-auto">{children}</div>
       </div>
     </div>
   );

@@ -40,6 +40,18 @@ export default function AuctionCard({ a }: { a: AuctionListItemDto }) {
             {highest === "-" ? "-" : `${Number(highest).toFixed(2)} ${a.currency}`}
           </span>
         </div>
+        {a.sellerUsername && (
+          <div className="mt-2 text-xs text-neutral-400">
+            Satıcı:{" "}
+            <Link
+              href={`/u/${a.sellerUsername}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-sky-400 hover:underline"
+            >
+              @{a.sellerUsername}
+            </Link>
+          </div>
+        )}
       </div>
     </Link>
   );

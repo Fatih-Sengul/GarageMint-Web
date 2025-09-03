@@ -72,13 +72,13 @@ export interface ProfilePublicDto {
     id: number;
     userId: number;
     username: string;
-    displayName?: string;
+    displayName?: string | null;
     bio?: string | null;
-    avatarUrl?: string;
-    bannerUrl?: string;
+    avatarUrl?: string | null;
+    bannerUrl?: string | null;
     location?: string | null;
     websiteUrl?: string | null;
-    language?: string;
+    language?: string | null;
     isVerified?: boolean | null;
     isPublic?: boolean | null;
     createdAt?: string;
@@ -118,18 +118,18 @@ export type NotificationSettingsUpdateRequest = NotificationSettingsDto;
 export interface UsernameAvailabilityDto { available: boolean; }
 export interface UsernameSuggestionsDto { candidates: string[]; }
 
-export interface FollowUserDto {
-    id: number;
+export type FollowUserDto = {
+    id: number;            // profileId
     username: string;
-    displayName?: string;
-    avatarUrl?: string;
+    displayName: string | null;
+    avatarUrl?: string | null;
     isVerified?: boolean | null;
-}
+};
 
-export interface FollowListResponse {
+export type FollowListResponse = {
     items: FollowUserDto[];
     page: number;
     size: number;
     totalElements: number;
     totalPages: number;
-}
+};

@@ -30,6 +30,18 @@ export default function ListingCard({ it }: { it: ListingResponseDto }) {
                     </span>
                     {it.location && <span className="text-xs text-neutral-400">{it.location}</span>}
                 </div>
+                {it.seller?.username && (
+                    <div className="mt-1 text-xs text-neutral-400">
+                        Satıcı:{" "}
+                        <Link
+                            href={`/u/${it.seller.username}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-sky-400 hover:underline"
+                        >
+                            @{it.seller.username}
+                        </Link>
+                    </div>
+                )}
             </div>
         </Link>
     );
