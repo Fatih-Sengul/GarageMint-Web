@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import Modal from "@/components/ui/Modal";
 import FollowButton from "@/components/profile/FollowButton";
 import { FollowersList, FollowingList } from "@/components/profile/FollowList";
+import ListingCard from "@/components/listings/ListingCard";
 import { useMyProfile } from "@/lib/queries/profile"; // sizde me hook farklı dosyada olabilir
 import { usePublicProfile } from "@/lib/queries/profile";
 
@@ -25,6 +26,8 @@ export default function PublicProfilePage() {
       </div>
     );
   }
+
+  const s = p.stats ?? {};
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 grid gap-6">
@@ -67,21 +70,24 @@ export default function PublicProfilePage() {
       </section>
 
       {/* stats */}
-      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <button
-          className="rounded-xl border border-white/10 p-4 bg-neutral-900 text-center shadow-sm hover:shadow-md"
-          onClick={() => setOpen("followers")}
-        >
-          <div className="text-2xl font-extrabold">{p.stats?.followersCount ?? 0}</div>
-          <div className="text-xs text-neutral-400">Takipçi</div>
-        </button>
-        <button
-          className="rounded-xl border border-white/10 p-4 bg-neutral-900 text-center shadow-sm hover:shadow-md"
-          onClick={() => setOpen("following")}
-        >
-          <div className="text-2xl font-extrabold">{p.stats?.followingCount ?? 0}</div>
-          <div className="text-xs text-neutral-400">Takip</div>
-        </button>
+      <section className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        {[
+          { key: "listingsActive", label: "Aktif İlan", value: s.listingsActiveCount ?? 0 },
+          { key: "listingsTotal", label: "Toplam İlan", value: s.listingsTotalCount ?? 0 },
+          { key: "followers", label: "Takipçi", value: s.followersCount ?? 0, clickable: true },
+          { key: "following", label: "Takip", value: s.followingCount ?? 0, clickable: true },
+          { key: "responseRate", label: "Cevap Oranı", value: `${s.responseRate ?? 0}%` },
+        ].map((c) => (
+          <button
+            key={c.key}
+            className="rounded-xl border border-white/10 p-4 bg-neutral-900 text-center shadow-sm hover:shadow-md disabled:cursor-default"
+            onClick={() => c.clickable && setOpen(c.key as "followers" | "following")}
+            disabled={!c.clickable}
+          >
+            <div className="text-2xl font-extrabold">{c.value}</div>
+            <div className="text-xs text-neutral-400">{c.label}</div>
+          </button>
+        ))}
       </section>
 
       {/* bio */}
@@ -90,6 +96,7 @@ export default function PublicProfilePage() {
         <p className="text-sm text-neutral-300 whitespace-pre-wrap">{p.bio ?? "—"}</p>
         <div className="mt-3 grid gap-2 text-sm text-neutral-400">
           {p.location && <div><span className="text-neutral-500">Konum:</span> {p.location}</div>}
+          {p.language && <div><span className="text-neutral-500">Dil:</span> {p.language}</div>}
           {p.websiteUrl && (
             <div>
               <span className="text-neutral-500">Web:</span>{" "}
@@ -98,8 +105,28 @@ export default function PublicProfilePage() {
               </a>
             </div>
           )}
+          {p.links?.map((l) => (
+            <div key={l.id}>
+              <span className="text-neutral-500">{l.label ?? l.type}:</span>{" "}
+              <a href={l.url} target="_blank" className="text-sky-400 hover:underline">
+                {l.url}
+              </a>
+            </div>
+          ))}
         </div>
       </section>
+
+      {/* listings */}
+      {p.listings?.length ? (
+        <section className="rounded-2xl border border-white/10 bg-neutral-900/60 shadow-sm p-5">
+          <h2 className="text-lg font-semibold mb-4">İlanlar</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {p.listings.map((l) => (
+              <ListingCard key={l.id} it={l} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {/* modal’lar */}
       <Modal open={open === "followers"} onClose={() => setOpen(null)} title="Takipçiler">

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMyProfile } from "@/lib/queries/profile";
 import type { ListingResponseDto } from "@/lib/types/listing";
 
 export default function ListingCard({ it }: { it: ListingResponseDto }) {
@@ -9,6 +10,8 @@ export default function ListingCard({ it }: { it: ListingResponseDto }) {
     const isTrade = it.type === "TRADE";
     const badge = isTrade ? "Takas" : (it.price ? `${formatMoney(it.price, it.currency)}` : "Satış");
     const router = useRouter();
+    const { data: me } = useMyProfile();
+
 
     return (
         <Link href={`/listings/${it.id}`} className="group block overflow-hidden rounded-xl border border-white/10 bg-neutral-900 hover:border-white/20">
@@ -38,7 +41,10 @@ export default function ListingCard({ it }: { it: ListingResponseDto }) {
                         <span
                             onClick={(e) => {
                                 e.stopPropagation();
+                                const u = it.seller!.username;
+                                router.push(me?.username === u ? "/me" : `/u/${u}`);
                                 router.push(`/u/${it.seller!.username}`);
+
                             }}
                             className="cursor-pointer text-sky-400 hover:underline"
                         >

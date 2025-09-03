@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useFollowers, useFollowing } from "@/lib/queries/profile";
+import { useMyProfile, useFollowers, useFollowing } from "@/lib/queries/profile";
 
 export function FollowersList({ username }: { username: string }) {
   const { data, isLoading, isError } = useFollowers(username);
@@ -22,23 +22,27 @@ export function FollowingList({ username }: { username: string }) {
 }
 
 function UserList({ items }: { items: {username:string;displayName?:string|null;avatarUrl?:string|null;isVerified?:boolean|null}[] }) {
+  const { data: me } = useMyProfile();
   return (
     <ul className="grid gap-2">
-      {items.map((u) => (
-        <li key={u.username} className="flex items-center justify-between rounded-xl border border-white/10 p-2">
-          <div className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={u.avatarUrl ?? "/avatar-placeholder.png"} alt={u.username} className="h-9 w-9 rounded-lg object-cover ring-1 ring-white/10"/>
-            <div>
-              <Link href={`/u/${u.username}`} className="font-semibold hover:underline">
-                {u.displayName ?? u.username}
-              </Link>
-              <div className="text-xs text-neutral-400">@{u.username}</div>
+      {items.map((u) => {
+        const url = me?.username === u.username ? "/me" : `/u/${u.username}`;
+        return (
+          <li key={u.username} className="flex items-center justify-between rounded-xl border border-white/10 p-2">
+            <div className="flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={u.avatarUrl ?? "/avatar-placeholder.png"} alt={u.username} className="h-9 w-9 rounded-lg object-cover ring-1 ring-white/10"/>
+              <div>
+                <Link href={url} className="font-semibold hover:underline">
+                  {u.displayName ?? u.username}
+                </Link>
+                <div className="text-xs text-neutral-400">@{u.username}</div>
+              </div>
             </div>
-          </div>
-          <Link href={`/u/${u.username}`} className="text-xs text-sky-400 hover:underline">Profili gör →</Link>
-        </li>
-      ))}
+            <Link href={url} className="text-xs text-sky-400 hover:underline">Profili gör →</Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }

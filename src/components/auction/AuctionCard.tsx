@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMyProfile } from "@/lib/queries/profile";
 import { AuctionListItemDto } from "@/lib/types/auction";
 import { formatCountdown } from "@/lib/utils/time";
 import { trAuctionStatus } from "@/lib/utils/i18n";
@@ -7,6 +9,8 @@ import { trAuctionStatus } from "@/lib/utils/i18n";
 export default function AuctionCard({ a }: { a: AuctionListItemDto }) {
   const highest = a.highestBidAmount ?? "-";
   const cover = a.coverUrl ?? `https://picsum.photos/seed/auction${a.id}/1200/800`;
+  const router = useRouter();
+  const { data: me } = useMyProfile();
 
   return (
     <Link
@@ -43,13 +47,16 @@ export default function AuctionCard({ a }: { a: AuctionListItemDto }) {
         {a.sellerUsername && (
           <div className="mt-2 text-xs text-neutral-400">
             Satıcı:{" "}
-            <Link
-              href={`/u/${a.sellerUsername}`}
-              onClick={(e) => e.stopPropagation()}
-              className="text-sky-400 hover:underline"
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                const u = a.sellerUsername!;
+                router.push(me?.username === u ? "/me" : `/u/${u}`);
+              }}
+              className="cursor-pointer text-sky-400 hover:underline"
             >
               @{a.sellerUsername}
-            </Link>
+            </span>
           </div>
         )}
       </div>
