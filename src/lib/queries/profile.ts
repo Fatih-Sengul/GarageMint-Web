@@ -11,21 +11,22 @@ import type {
 } from "@/lib/types/profile";
 
 // Fetch helpers for public profile and follow APIs
+// These use the axios `api` instance so that requests are sent to the backend
+// base URL instead of the Next.js dev server. Previously `fetch` was called
+// with relative paths which resulted in 404 responses from the UI when the
+// backend actually had the data.
 async function getJSON<T>(url: string): Promise<T> {
-    const r = await fetch(url, { credentials: "include" });
-    if (!r.ok) throw new Error(await r.text());
-    return r.json();
+    const r = await api.get<T>(url);
+    return r.data;
 }
+
 async function call(method: "POST" | "DELETE", url: string, body?: unknown) {
-    const r = await fetch(url, {
+    const r = await api.request({
+        url,
         method,
-        credentials: "include",
-        headers: body ? { "Content-Type": "application/json" } : undefined,
-        body: body ? JSON.stringify(body) : undefined,
+        data: body,
     });
-    if (!r.ok) throw new Error(await r.text());
-    if (r.status === 204) return null;
-    try { return await r.json(); } catch { return null; }
+    return r.status === 204 ? null : r.data;
 }
 
 export const qk = {
