@@ -12,6 +12,7 @@ export default function ListingCard({ it }: { it: ListingResponseDto }) {
     const router = useRouter();
     const { data: me } = useMyProfile();
 
+
     return (
         <Link href={`/listings/${it.id}`} className="group block overflow-hidden rounded-xl border border-white/10 bg-neutral-900 hover:border-white/20">
             <div className="relative aspect-[4/3] w-full overflow-hidden">
@@ -42,6 +43,8 @@ export default function ListingCard({ it }: { it: ListingResponseDto }) {
                                 e.stopPropagation();
                                 const u = it.seller!.username;
                                 router.push(me?.username === u ? "/me" : `/u/${u}`);
+                                router.push(`/u/${it.seller!.username}`);
+
                             }}
                             className="cursor-pointer text-sky-400 hover:underline"
                         >
