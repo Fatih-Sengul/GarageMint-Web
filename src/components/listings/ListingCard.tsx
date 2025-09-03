@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { ListingResponseDto } from "@/lib/types/listing";
 
 export default function ListingCard({ it }: { it: ListingResponseDto }) {
     const img = it.images?.[0]?.url ?? "/listing-placeholder.jpg";
     const isTrade = it.type === "TRADE";
     const badge = isTrade ? "Takas" : (it.price ? `${formatMoney(it.price, it.currency)}` : "Satış");
+    const router = useRouter();
 
     return (
         <Link href={`/listings/${it.id}`} className="group block overflow-hidden rounded-xl border border-white/10 bg-neutral-900 hover:border-white/20">
@@ -33,13 +35,15 @@ export default function ListingCard({ it }: { it: ListingResponseDto }) {
                 {it.seller?.username && (
                     <div className="mt-1 text-xs text-neutral-400">
                         Satıcı:{" "}
-                        <Link
-                            href={`/u/${it.seller.username}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-sky-400 hover:underline"
+                        <span
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/u/${it.seller!.username}`);
+                            }}
+                            className="cursor-pointer text-sky-400 hover:underline"
                         >
                             @{it.seller.username}
-                        </Link>
+                        </span>
                     </div>
                 )}
             </div>
