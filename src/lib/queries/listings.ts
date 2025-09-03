@@ -1,15 +1,15 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import type { ListingResponseDto, Page } from "@/lib/types/listing";
+import type { ListingResponseDto, Page, ListingUpdateRequest } from "@/lib/types/listing";
 
 // Backend: GET /api/v1/cars/listings/me -> ListingResponseDto[]
 export interface MyListingMini {
     id: number;
     title: string;
     images?: { url: string }[];
-    status?: "ACTIVE" | "SOLD" | "WITHDRAWN";
+    status?: "ACTIVE" | "SOLD" | "INACTIVE";
     isActive?: boolean;
 }
 
@@ -28,7 +28,7 @@ export type ListingsSearchParams = {
     condition?: string;
     limitedEdition?: boolean;
     type?: "SALE" | "TRADE";
-    status?: "ACTIVE" | "SOLD" | "WITHDRAWN";
+    status?: "ACTIVE" | "SOLD" | "INACTIVE";
     location?: string;
     modelYearFrom?: number;
     modelYearTo?: number;
@@ -101,5 +101,58 @@ export function useMyActiveListings() {
             return (data ?? []).filter((x) => x.status === "ACTIVE" && (x.isActive ?? true));
         },
         staleTime: 10_000,
+    });
+}
+
+async function getJSON<T>(url: string): Promise<T> {
+    const r = await fetch(url, { credentials: "include" });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+}
+
+async function call<T = unknown>(method: "PUT" | "DELETE", url: string, body?: unknown): Promise<T> {
+    const r = await fetch(url, {
+        method,
+        credentials: "include",
+        headers: body ? { "Content-Type": "application/json" } : undefined,
+        body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!r.ok) throw new Error(await r.text());
+    try {
+        return (await r.json()) as T;
+    } catch {
+        return null as unknown as T;
+    }
+}
+
+/** Owner detayını çekmek için (mevcut backend endpoint) */
+export function useMyListing(id: number) {
+    return useQuery<ListingResponseDto>({
+        queryKey: ["myListing", id],
+        queryFn: () => getJSON(`/api/v1/cars/listings/me/${id}`),
+        enabled: !!id,
+    });
+}
+
+export function useUpdateListing(id: number) {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (req: ListingUpdateRequest) => call("PUT", `/api/v1/listings/${id}`, req),
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ["myListing", id] });
+            qc.invalidateQueries({ queryKey: ["myListings"] });
+            qc.invalidateQueries({ queryKey: ["listings"] });
+        },
+    });
+}
+
+export function useDeleteListing(id: number) {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: () => call("DELETE", `/api/v1/listings/${id}`),
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ["myListings"] });
+            qc.invalidateQueries({ queryKey: ["listings"] });
+        },
     });
 }

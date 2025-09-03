@@ -42,7 +42,7 @@ export type ListingResponseDto = {
     currency?: string | null;
     location?: string | null;
 
-    status: "ACTIVE" | "SOLD" | "WITHDRAWN";
+    status: "ACTIVE" | "SOLD" | "INACTIVE";
     isActive?: boolean | null;
 
     createdAt?: string | null;
@@ -58,4 +58,12 @@ export type Page<T> = {
     totalPages: number;
     size: number;
     number: number; // current page (0-based)
+};
+
+export type ListingUpdateRequest = {
+    title?: string;
+    description?: string;
+    price?: number | null;
+    currency?: string | null; // 3 harf
+    status?: "ACTIVE" | "INACTIVE" | "SOLD";
 };

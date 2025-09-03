@@ -26,7 +26,7 @@ export type AuctionResponseDto = {
   currency: string;
   startsAt: string;
   endsAt: string;
-  status: string;
+  status: "SCHEDULED" | "ACTIVE" | "ENDED" | "CANCELLED";
   highestBidAmount?: string | null;
   highestBidUserId?: number | null;
   createdAt: string;
@@ -60,6 +60,16 @@ export type AuctionCreateRequest = {
   brand?: string;
   model?: string;
   location?: string;
+};
+
+export type AuctionUpdateRequest = {
+  title?: string;
+  description?: string;
+  brand?: string;
+  model?: string;
+  location?: string;
+  endsAt?: string; // ISO
+  status?: "ACTIVE" | "CANCELLED";
 };
 
 export type BidCreateRequest = { amount: string };

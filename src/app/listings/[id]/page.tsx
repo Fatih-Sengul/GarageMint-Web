@@ -2,11 +2,14 @@
 
 import { useParams } from "next/navigation";
 import { useListingById } from "@/lib/queries/listings";
+import { useMyProfile } from "@/lib/queries/profile";
+import Link from "next/link";
 
 export default function ListingDetailPage() {
     const params = useParams<{ id: string }>();
     const id = Number(params.id);
     const { data, isLoading, isError } = useListingById(id);
+    const { data: me } = useMyProfile();
 
     if (isLoading) return <main className="mx-auto max-w-[1100px] px-4 py-6">Yükleniyor…</main>;
     if (isError || !data) return <main className="mx-auto max-w-[1100px] px-4 py-6">İlan bulunamadı.</main>;
@@ -23,6 +26,9 @@ export default function ListingDetailPage() {
                         <img src={img} alt={data.title} className="h-full w-full object-cover" />
                     </div>
                     <h1 className="mt-4 text-2xl font-extrabold tracking-tight">{data.title}</h1>
+                    {me?.userId === data.seller?.userId && (
+                        <Link href={`/listings/${id}/edit`} className="text-xs text-sky-400 hover:underline">Düzenle</Link>
+                    )}
                     {data.description && <p className="mt-2 whitespace-pre-wrap text-sm text-neutral-300">{data.description}</p>}
                 </section>
 
