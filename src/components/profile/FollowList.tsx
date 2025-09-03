@@ -1,35 +1,42 @@
 "use client";
+
 import Link from "next/link";
 import { useFollowers, useFollowing } from "@/lib/queries/profile";
 
 export function FollowersList({ username }: { username: string }) {
-  const { data } = useFollowers(username, 0, 50);
-  if (!data) return null;
-  return <List items={data.items} empty="Henüz takipçi yok." />;
+  const { data, isLoading, isError } = useFollowers(username);
+  if (isLoading) return <p className="text-sm text-neutral-400">Yükleniyor…</p>;
+  if (isError) return <p className="text-sm text-red-400">Takipçiler alınamadı.</p>;
+
+  if (!data?.items?.length) return <p className="text-sm text-neutral-400">Takipçi yok.</p>;
+  return <UserList items={data.items} />;
 }
 
 export function FollowingList({ username }: { username: string }) {
-  const { data } = useFollowing(username, 0, 50);
-  if (!data) return null;
-  return <List items={data.items} empty="Henüz kimseyi takip etmiyor." />;
+  const { data, isLoading, isError } = useFollowing(username);
+  if (isLoading) return <p className="text-sm text-neutral-400">Yükleniyor…</p>;
+  if (isError) return <p className="text-sm text-red-400">Takip edilenler alınamadı.</p>;
+
+  if (!data?.items?.length) return <p className="text-sm text-neutral-400">Kimseyi takip etmiyorsun.</p>;
+  return <UserList items={data.items} />;
 }
 
-function List({ items, empty }: { items: { username: string; displayName?: string; avatarUrl?: string; isVerified?: boolean | null }[]; empty: string }) {
-  if (!items.length) return <p className="text-sm text-neutral-400">{empty}</p>;
+function UserList({ items }: { items: {username:string;displayName?:string|null;avatarUrl?:string|null;isVerified?:boolean|null}[] }) {
   return (
-    <ul className="grid gap-3">
+    <ul className="grid gap-2">
       {items.map((u) => (
-        <li key={u.username} className="flex items-center gap-3">
-          <div className="h-9 w-9 overflow-hidden rounded-full bg-neutral-800 ring-1 ring-white/10">
+        <li key={u.username} className="flex items-center justify-between rounded-xl border border-white/10 p-2">
+          <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={u.avatarUrl ?? "/avatar-placeholder.png"} alt={u.username} className="h-full w-full object-cover" />
+            <img src={u.avatarUrl ?? "/avatar-placeholder.png"} alt={u.username} className="h-9 w-9 rounded-lg object-cover ring-1 ring-white/10"/>
+            <div>
+              <Link href={`/u/${u.username}`} className="font-semibold hover:underline">
+                {u.displayName ?? u.username}
+              </Link>
+              <div className="text-xs text-neutral-400">@{u.username}</div>
+            </div>
           </div>
-          <div className="min-w-0">
-            <Link href={`/u/${u.username}`} className="font-medium hover:underline truncate block">
-              {u.displayName ?? u.username}
-            </Link>
-            <div className="text-xs text-neutral-500">@{u.username}</div>
-          </div>
+          <Link href={`/u/${u.username}`} className="text-xs text-sky-400 hover:underline">Profili gör →</Link>
         </li>
       ))}
     </ul>

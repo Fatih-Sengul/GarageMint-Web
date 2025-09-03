@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMyProfile, useInitMyProfile } from "@/lib/queries/profile";
+import FollowPanel from "@/components/me/FollowPanel";
 
 import ProfileHeader from "@/components/me/ProfileHeader";
 import ProfileForm from "@/components/me/ProfileForm";
@@ -96,6 +97,12 @@ export default function MePage() {
 
                 {/* Sağ kolon */}
                 <div className="lg:col-span-1 grid gap-6">
+                    <FollowPanel
+                        username={me.username}
+                        followersCount={me.stats?.followersCount ?? me.followersCount}
+                        followingCount={me.stats?.followingCount ?? me.followingCount}
+                    />
+
                     <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-6">
                         <h2 className="text-xl font-semibold mb-4">Tercihler</h2>
                         <PrefsForm me={me} />

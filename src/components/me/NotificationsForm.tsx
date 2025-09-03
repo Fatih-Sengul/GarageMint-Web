@@ -89,7 +89,11 @@ export default function NotificationsForm({ me }: Props) {
                     Bildirimleri Kaydet
                 </button>
                 {saved && <span className="text-xs px-2 py-1 rounded bg-emerald-600/20 text-emerald-300">Kaydedildi</span>}
-                {m.isError && <span className="text-xs px-2 py-1 rounded bg-red-600/20 text-red-300">Hata: {(m.error as any)?.message ?? "Kaydedilemedi"}</span>}
+                {m.isError && (
+                    <span className="text-xs px-2 py-1 rounded bg-red-600/20 text-red-300">
+                        Hata: {m.error instanceof Error ? m.error.message : "Kaydedilemedi"}
+                    </span>
+                )}
             </div>
         </form>
     );
