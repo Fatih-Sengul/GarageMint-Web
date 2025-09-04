@@ -25,7 +25,7 @@ export default function ListingsPage() {
 
             <ListingFilters
                 value={filters}
-                onChange={(f) => setParams((s) => ({ ...s, ...f, page: 0 }))}
+                onChangeAction={(f) => setParams((s) => ({ ...s, ...f, page: 0 }))}
             />
 
             {isLoading && <div className="mt-6 text-neutral-400">Yükleniyor…</div>}
