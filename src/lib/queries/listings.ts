@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 import type { ListingResponseDto, Page, ListingUpdateRequest } from "@/lib/types/listing";
 
 // Backend: GET /api/v1/cars/listings/me -> ListingResponseDto[]
