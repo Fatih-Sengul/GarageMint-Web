@@ -13,11 +13,11 @@ export default function ProfileForm({ me }: { me: ProfileOwnerDto }) {
     useEffect(() => {
         setForm({
             username: me.username,           // istersek ileride editable yaparız
-            displayName: me.displayName,
-            bio: me.bio,
-            location: me.location,
-            websiteUrl: me.websiteUrl,
-            language: me.language,
+            displayName: me.displayName ?? undefined,
+            bio: me.bio ?? undefined,
+            location: me.location ?? undefined,
+            websiteUrl: me.websiteUrl ?? undefined,
+            language: me.language ?? undefined,
             isPublic: me.isPublic ?? true,
         });
     }, [me]);

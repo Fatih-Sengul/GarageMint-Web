@@ -66,9 +66,9 @@ export default function MePage() {
                 <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-0 overflow-hidden">
                     <ProfileHeader
                         username={me.username}
-                        displayName={me.displayName}
-                        avatarUrl={me.avatarUrl}
-                        bannerUrl={me.bannerUrl}
+                        displayName={me.displayName ?? undefined}
+                        avatarUrl={me.avatarUrl ?? undefined}
+                        bannerUrl={me.bannerUrl ?? undefined}
                         isVerified={me.isVerified ?? false}
                     />
                 </section>
