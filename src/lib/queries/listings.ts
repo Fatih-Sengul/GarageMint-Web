@@ -72,10 +72,7 @@ export function useListingsSearch(p: ListingsSearchParams) {
     const qs = toQuery(p);
     return useQuery({
         queryKey: qkListings.search(qs),
-        queryFn: async (): Promise<Page<ListingResponseDto>> => {
-            const res = await api.get(`/cars/listings?${qs}`);
-            return res.data;
-        },
+        queryFn: (): Promise<Page<ListingResponseDto>> => getJSON(`/api/v1/cars/listings?${qs}`),
         staleTime: 30_000,
     });
 }
@@ -83,10 +80,7 @@ export function useListingsSearch(p: ListingsSearchParams) {
 export function useListingById(id: number) {
     return useQuery({
         queryKey: qkListings.byId(id),
-        queryFn: async (): Promise<ListingResponseDto> => {
-            const res = await api.get(`/cars/listings/${id}`);
-            return res.data;
-        },
+        queryFn: (): Promise<ListingResponseDto> => getJSON(`/api/v1/cars/listings/${id}`),
         enabled: Number.isFinite(id),
         staleTime: 30_000,
     });
@@ -96,7 +90,7 @@ export function useMyActiveListings() {
     return useQuery({
         queryKey: ["myListings", "active"],
         queryFn: async () => {
-            const { data } = await api.get<MyListingMini[]>("/cars/listings/me");
+            const data = await getJSON<MyListingMini[]>("/api/v1/cars/listings/me");
             // endpoint zaten aktifleri döndürüyor; yine de filtre kalsın:
             return (data ?? []).filter((x) => x.status === "ACTIVE" && (x.isActive ?? true));
         },
