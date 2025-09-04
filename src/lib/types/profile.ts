@@ -1,3 +1,5 @@
+import type { ListingResponseDto } from "./listing";
+
 export type DigestFrequency = "DAILY" | "WEEKLY" | "MONTHLY" | "NEVER" | string;
 export type ProfileLinkType = "INSTAGRAM" | "TWITTER" | "WEBSITE" | string;
 
@@ -38,35 +40,6 @@ export interface ProfileStatsDto {
     lastActiveAt?: string;
 }
 
-export interface ListingImageDto { id: number; url: string; idx?: number; }
-export interface ListingTagDto { id: number; name: string; slug: string; }
-
-export interface ListingResponseDto {
-    id: number;
-    title: string;
-    description?: string;
-    brandId?: number;
-    seriesId?: number;
-    brandName?: string;
-    seriesName?: string;
-    modelName?: string;
-    scale?: string;
-    modelYear?: number;
-    condition?: string;
-    limitedEdition?: boolean;
-    theme?: string;
-    countryOfOrigin?: string;
-    type?: string;
-    price?: number;
-    currency?: string;
-    location?: string;
-    status?: string;
-    isActive?: boolean;
-    createdAt?: string;
-    updatedAt?: string;
-    images?: ListingImageDto[];
-    tags?: ListingTagDto[];
-}
 
 export interface ProfilePublicDto {
     id: number;

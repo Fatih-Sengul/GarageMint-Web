@@ -25,7 +25,7 @@ export default function BidForm({ auction }: { auction: AuctionResponseDto }) {
     e.preventDefault();
     if (amount < min) return;
     m.mutate(
-      { amount },
+      { amount: amount.toString() },
       {
         onSuccess: () => {
           push({ type: "success", title: "Teklif verildi", description: `${formatTRY(amount)} ile teklifiniz alındı.` });
