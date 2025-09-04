@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080";
@@ -46,11 +46,12 @@ export default function CollectionDetailPage({
   params,
   searchParams,
 }: {
-  params: { slug: string };
-  searchParams: { page?: string };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
-  const slug = params.slug;
-  const pageIdx = Math.max(0, parseInt(searchParams.page ?? "0", 10) || 0);
+  const { slug } = use(params);
+  const { page } = use(searchParams);
+  const pageIdx = Math.max(0, parseInt(page ?? "0", 10) || 0);
 
   const [data, setData] = useState<PageResponse | null>(null);
   const [loading, setLoading] = useState(true);
