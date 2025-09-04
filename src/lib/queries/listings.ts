@@ -13,6 +13,20 @@ export interface MyListingMini {
     isActive?: boolean;
 }
 
+export type PublicListingDto = {
+    id: number;
+    title: string;
+    description?: string | null;
+    images?: { url: string }[];
+    price?: number | null;
+    currency?: string | null;
+    type?: "SALE" | "TRADE";
+    brandName?: string | null;
+    modelName?: string | null;
+    location?: string | null;
+    seller?: { username: string; displayName?: string | null; avatarUrl?: string | null } | null;
+};
+
 export const qkListings = {
     search: (key: string) => ["listings","search",key] as const,
     byId: (id: number) => ["listings","byId",id] as const,
@@ -83,6 +97,14 @@ export function useListingById(id: number) {
         queryFn: (): Promise<ListingResponseDto> => getJSON(`/api/v1/cars/listings/${id}`),
         enabled: Number.isFinite(id),
         staleTime: 30_000,
+    });
+}
+
+export function usePublicListing(id: number) {
+    return useQuery<PublicListingDto>({
+        queryKey: ["listing", id],
+        queryFn: () => getJSON(`/api/v1/cars/listings/${id}`),
+        enabled: !!id,
     });
 }
 

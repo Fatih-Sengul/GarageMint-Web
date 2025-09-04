@@ -129,10 +129,18 @@ export default function PublicProfilePage() {
       ) : null}
 
       {/* modal’lar */}
-      <Modal open={open === "followers"} onClose={() => setOpen(null)} title="Takipçiler">
+      <Modal
+        open={open === "followers"}
+        onCloseAction={() => setOpen(null)}
+        title="Takipçiler"
+      >
         <FollowersList username={p.username} />
       </Modal>
-      <Modal open={open === "following"} onClose={() => setOpen(null)} title="Takip Edilenler">
+      <Modal
+        open={open === "following"}
+        onCloseAction={() => setOpen(null)}
+        title="Takip Edilenler"
+      >
         <FollowingList username={p.username} />
       </Modal>
     </div>

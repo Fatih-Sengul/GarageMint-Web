@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   RocketLaunchIcon,
@@ -6,7 +7,7 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/outline";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Hakkımızda • GarageMint",
   description:
     "GarageMint: die-cast koleksiyonerleri için güvenli ve şık bir pazar yeri. Hikâyemiz, vizyonumuz ve ekibimiz.",

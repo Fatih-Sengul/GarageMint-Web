@@ -37,10 +37,18 @@ export default function FollowPanel({
         </div>
       </section>
 
-      <Modal open={open === "followers"} onClose={() => setOpen(null)} title="Takipçilerim">
+      <Modal
+        open={open === "followers"}
+        onCloseAction={() => setOpen(null)}
+        title="Takipçilerim"
+      >
         <FollowersList username={username} />
       </Modal>
-      <Modal open={open === "following"} onClose={() => setOpen(null)} title="Takip Ettiklerim">
+      <Modal
+        open={open === "following"}
+        onCloseAction={() => setOpen(null)}
+        title="Takip Ettiklerim"
+      >
         <FollowingList username={username} />
       </Modal>
     </>

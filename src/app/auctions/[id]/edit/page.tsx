@@ -103,8 +103,11 @@ export default function AuctionEditPage() {
 
       <Confirm
         open={openConfirm}
-        onCancel={()=>setOpenConfirm(false)}
-        onConfirm={()=>{ setOpenConfirm(false); cancelAuction(); }}
+        onCancelAction={() => setOpenConfirm(false)}
+        onConfirmAction={() => {
+          setOpenConfirm(false);
+          cancelAuction();
+        }}
         title="Mezat iptal edilsin mi?"
         description="Bu işlem mezatı CANCELLED durumuna getirir."
         confirmText="Evet, iptal et"

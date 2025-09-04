@@ -90,8 +90,11 @@ export default function ListingEditPage() {
 
       <Confirm
         open={openConfirm}
-        onCancel={()=>setOpenConfirm(false)}
-        onConfirm={()=>{ setOpenConfirm(false); softDelete(); }}
+        onCancelAction={() => setOpenConfirm(false)}
+        onConfirmAction={() => {
+          setOpenConfirm(false);
+          softDelete();
+        }}
         title="İlan pasifleştirilsin mi?"
         description="Bu işlem ilanı pasif yapar (INACTIVE)."
         confirmText="Evet, pasifleştir"
