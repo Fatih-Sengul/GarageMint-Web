@@ -1,18 +1,20 @@
 "use client";
 import React from "react";
 
-export default function Modal({
-  open,
-  onCloseAction,
-  title,
-  children,
-}: {
+interface ModalProps {
   open: boolean;
   /** Next 15: function prop adı ...Action olmalı */
   onCloseAction: () => void;
   title?: string;
   children: React.ReactNode;
-}) {
+}
+
+export default function Modal({
+  open,
+  onCloseAction,
+  title,
+  children,
+}: ModalProps) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50">
