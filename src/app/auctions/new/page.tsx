@@ -2,6 +2,7 @@
 import { useCreateAuction, useUploadAuctionImages } from "@/lib/queries/auction";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import Guard from "@/components/auth/Guard";
 
 const ALLOWED = ["image/jpeg","image/png","image/webp","image/gif"];
 const MAX_SIZE = 8 * 1024 * 1024;
@@ -59,6 +60,7 @@ export default function AuctionNewPage() {
   };
 
   return (
+    <Guard>
     <div className="mx-auto max-w-3xl px-4 py-6 grid gap-6">
       <h1 className="text-2xl font-extrabold">Yeni Mezat Oluştur</h1>
 
@@ -127,6 +129,7 @@ export default function AuctionNewPage() {
         </div>
       </form>
     </div>
+    </Guard>
   );
 }
 

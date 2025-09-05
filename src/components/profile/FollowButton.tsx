@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useFollow, useUnfollow } from "@/lib/queries/profile";
+import { useFollow, useUnfollow } from "@/lib/queries/follow";
 
 export default function FollowButton({
   username,

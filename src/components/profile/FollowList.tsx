@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useMyProfile, useFollowers, useFollowing } from "@/lib/queries/profile";
+import { useMyProfile } from "@/lib/queries/profile";
+import { useFollowers, useFollowing } from "@/lib/queries/follow";
 
 export function FollowersList({ username }: { username: string }) {
   const { data, isLoading, isError } = useFollowers(username);
   if (isLoading) return <p className="text-sm text-neutral-400">Yükleniyor…</p>;
   if (isError) return <p className="text-sm text-red-400">Takipçiler alınamadı.</p>;
 
-  if (!data?.items?.length) return <p className="text-sm text-neutral-400">Takipçi yok.</p>;
-  return <UserList items={data.items} />;
+  if (!data?.content?.length) return <p className="text-sm text-neutral-400">Takipçi yok.</p>;
+  return <UserList items={data.content} />;
 }
 
 export function FollowingList({ username }: { username: string }) {
@@ -17,8 +18,8 @@ export function FollowingList({ username }: { username: string }) {
   if (isLoading) return <p className="text-sm text-neutral-400">Yükleniyor…</p>;
   if (isError) return <p className="text-sm text-red-400">Takip edilenler alınamadı.</p>;
 
-  if (!data?.items?.length) return <p className="text-sm text-neutral-400">Kimseyi takip etmiyorsun.</p>;
-  return <UserList items={data.items} />;
+  if (!data?.content?.length) return <p className="text-sm text-neutral-400">Kimseyi takip etmiyorsun.</p>;
+  return <UserList items={data.content} />;
 }
 
 function UserList({ items }: { items: {username:string;displayName?:string|null;avatarUrl?:string|null;isVerified?:boolean|null}[] }) {
