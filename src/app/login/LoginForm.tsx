@@ -5,7 +5,7 @@ import { useLogin } from "@/lib/auth/hooks";
 
 export default function LoginForm() {
   const m = useLogin();
-  const [email, setEmail] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
 
   return (
@@ -14,16 +14,16 @@ export default function LoginForm() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          m.mutate({ email, password });
+          m.mutate({ emailOrUsername, password });
         }}
         className="mt-6 grid gap-3"
       >
         <input
           className="input"
-          placeholder="E-posta"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="E-posta veya kullanıcı adı"
+          type="text"
+          value={emailOrUsername}
+          onChange={(e) => setEmailOrUsername(e.target.value)}
           required
         />
         <input
