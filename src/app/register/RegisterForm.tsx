@@ -7,7 +7,7 @@ export default function RegisterForm() {
   const m = useRegister();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
 
   return (
     <div className="mx-auto max-w-sm px-4 py-16">
@@ -15,15 +15,15 @@ export default function RegisterForm() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          m.mutate({ email, password, displayName });
+          m.mutate({ email, password, username });
         }}
         className="mt-6 grid gap-3"
       >
         <input
           className="input"
-          placeholder="Görünen isim"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
+          placeholder="Kullanıcı adı"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input

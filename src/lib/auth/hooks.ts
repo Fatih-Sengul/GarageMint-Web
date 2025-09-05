@@ -5,7 +5,7 @@ import { useAuthStore } from "./store";
 export function useLogin() {
   const setTokens = useAuthStore((s) => s.setTokens);
   return useMutation({
-    mutationFn: async (payload: { email: string; password: string }) => {
+    mutationFn: async (payload: { emailOrUsername: string; password: string }) => {
       const r = await api.post("/api/v1/auth/login", payload);
       return r.data as { accessToken: string; refreshToken: string; expiresIn?: number };
     },
@@ -18,7 +18,7 @@ export function useLogin() {
 
 export function useRegister() {
   return useMutation({
-    mutationFn: async (payload: { email: string; password: string; displayName: string }) => {
+    mutationFn: async (payload: { email: string; password: string; username: string }) => {
       const r = await api.post("/api/v1/auth/register", payload);
       return r.data;
     },

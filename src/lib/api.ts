@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
@@ -20,9 +20,9 @@ let queue: Array<() => void> = [];
 
 api.interceptors.response.use(
   (res) => res,
-  async (err) => {
-    const original: any = err.config;
-    const status = err?.response?.status;
+  async (err: AxiosError) => {
+      const original = err.config as AxiosRequestConfig & { _retry?: boolean };
+      const status = err?.response?.status;
 
     if (status === 401 && !original?._retry) {
       if (refreshing) {
