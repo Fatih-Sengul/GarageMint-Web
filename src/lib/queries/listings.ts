@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import type { ListingResponseDto, Page, ListingUpdateRequest } from "@/lib/types/listing";
 
-// Backend: GET /api/v1/cars/listings/me -> ListingResponseDto[]
+// Backend: GET /api/v1/listings/me -> ListingResponseDto[]
 export interface MyListingMini {
     id: number;
     title: string;
@@ -86,7 +86,7 @@ export function useListingsSearch(p: ListingsSearchParams) {
     const qs = toQuery(p);
     return useQuery({
         queryKey: qkListings.search(qs),
-        queryFn: (): Promise<Page<ListingResponseDto>> => getJSON(`/cars/listings?${qs}`),
+        queryFn: (): Promise<Page<ListingResponseDto>> => getJSON(`/listings?${qs}`),
         staleTime: 30_000,
     });
 }
@@ -94,7 +94,7 @@ export function useListingsSearch(p: ListingsSearchParams) {
 export function useListingById(id: number) {
     return useQuery({
         queryKey: qkListings.byId(id),
-        queryFn: (): Promise<ListingResponseDto> => getJSON(`/cars/listings/${id}`),
+        queryFn: (): Promise<ListingResponseDto> => getJSON(`/listings/${id}`),
         enabled: Number.isFinite(id),
         staleTime: 30_000,
     });
@@ -103,7 +103,7 @@ export function useListingById(id: number) {
 export function usePublicListing(id: number) {
     return useQuery<PublicListingDto>({
         queryKey: ["listing", id],
-        queryFn: () => getJSON(`/cars/listings/${id}`),
+        queryFn: () => getJSON(`/listings/${id}`),
         enabled: !!id,
     });
 }
@@ -112,7 +112,7 @@ export function useMyActiveListings() {
     return useQuery({
         queryKey: ["myListings", "active"],
         queryFn: async () => {
-            const data = await getJSON<MyListingMini[]>("/cars/listings/me");
+            const data = await getJSON<MyListingMini[]>("/listings/me");
             // endpoint zaten aktifleri döndürüyor; yine de filtre kalsın:
             return (data ?? []).filter((x) => x.status === "ACTIVE" && (x.isActive ?? true));
         },
@@ -134,7 +134,7 @@ async function call<T = unknown>(method: "PUT" | "DELETE", path: string, body?: 
 export function useMyListing(id: number) {
     return useQuery<ListingResponseDto>({
         queryKey: ["myListing", id],
-        queryFn: () => getJSON(`/cars/listings/me/${id}`),
+        queryFn: () => getJSON(`/listings/me/${id}`),
         enabled: !!id,
     });
 }
