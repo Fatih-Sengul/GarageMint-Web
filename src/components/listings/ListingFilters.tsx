@@ -8,14 +8,16 @@ export type Filters = Pick<
   "type" | "priceMin" | "priceMax" | "sortBy" | "sortDir" | "size"
 >;
 
-export default function ListingFilters({
-  value,
-  onChangeAction,
-}: {
+interface ListingFiltersProps {
   value: Filters;
   /** Next 15: function prop adı ...Action olmalı */
   onChangeAction: (f: Filters) => void;
-}) {
+}
+
+export default function ListingFilters({
+  value,
+  onChangeAction,
+}: ListingFiltersProps) {
   const [local, setLocal] = useState<Filters>(value);
   useEffect(() => setLocal(value), [value]);
 
