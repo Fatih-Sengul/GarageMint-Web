@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import api from "@/lib/api";
 import type { ListingResponseDto, Page, ListingUpdateRequest } from "@/lib/types/listing";
 
 // Backend: GET /api/v1/listings/me -> ListingResponseDto[]
@@ -82,11 +82,11 @@ const toQuery = (p: ListingsSearchParams = {}) => {
     return u.toString();
 };
 
-export function useListingsSearch(p: ListingsSearchParams) {
+export function useListings(p: ListingsSearchParams) {
     const qs = toQuery(p);
     return useQuery({
         queryKey: qkListings.search(qs),
-        queryFn: (): Promise<Page<ListingResponseDto>> => getJSON(`/listings?${qs}`),
+        queryFn: (): Promise<Page<ListingResponseDto>> => getJSON(`/api/v1/listings?${qs}`),
         staleTime: 30_000,
     });
 }
@@ -94,7 +94,7 @@ export function useListingsSearch(p: ListingsSearchParams) {
 export function useListingById(id: number) {
     return useQuery({
         queryKey: qkListings.byId(id),
-        queryFn: (): Promise<ListingResponseDto> => getJSON(`/listings/${id}`),
+        queryFn: (): Promise<ListingResponseDto> => getJSON(`/api/v1/listings/${id}`),
         enabled: Number.isFinite(id),
         staleTime: 30_000,
     });
@@ -103,7 +103,7 @@ export function useListingById(id: number) {
 export function usePublicListing(id: number) {
     return useQuery<PublicListingDto>({
         queryKey: ["listing", id],
-        queryFn: () => getJSON(`/listings/${id}`),
+        queryFn: () => getJSON(`/api/v1/listings/${id}`),
         enabled: !!id,
     });
 }
@@ -112,7 +112,7 @@ export function useMyActiveListings() {
     return useQuery({
         queryKey: ["myListings", "active"],
         queryFn: async () => {
-            const data = await getJSON<MyListingMini[]>("/listings/me");
+            const data = await getJSON<MyListingMini[]>("/api/v1/listings/me");
             // endpoint zaten aktifleri döndürüyor; yine de filtre kalsın:
             return (data ?? []).filter((x) => x.status === "ACTIVE" && (x.isActive ?? true));
         },
@@ -134,7 +134,7 @@ async function call<T = unknown>(method: "PUT" | "DELETE", path: string, body?: 
 export function useMyListing(id: number) {
     return useQuery<ListingResponseDto>({
         queryKey: ["myListing", id],
-        queryFn: () => getJSON(`/listings/me/${id}`),
+        queryFn: () => getJSON(`/api/v1/listings/me/${id}`),
         enabled: !!id,
     });
 }
@@ -142,7 +142,7 @@ export function useMyListing(id: number) {
 export function useUpdateListing(id: number) {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: (req: ListingUpdateRequest) => call("PUT", `/listings/${id}`, req),
+        mutationFn: (req: ListingUpdateRequest) => call("PUT", `/api/v1/listings/${id}`, req),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["myListing", id] });
             qc.invalidateQueries({ queryKey: ["myListings"] });
@@ -154,7 +154,7 @@ export function useUpdateListing(id: number) {
 export function useDeleteListing(id: number) {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: () => call("DELETE", `/listings/${id}`),
+        mutationFn: () => call("DELETE", `/api/v1/listings/${id}`),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["myListings"] });
             qc.invalidateQueries({ queryKey: ["listings"] });

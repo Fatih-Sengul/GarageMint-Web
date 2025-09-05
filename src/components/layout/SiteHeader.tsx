@@ -1,8 +1,8 @@
 import Link from "next/link";
 import {
-    UserCircleIcon,
     MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
+import NavAuth from "./NavAuth";
 
 export default function SiteHeader() {
     return (
@@ -36,15 +36,7 @@ export default function SiteHeader() {
                             aria-label="Arama"
                         />
                     </div>
-                    <Link
-                        href="/me"
-                        className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-white/10"
-                        title="Profilim"
-                        aria-label="Profilim"
-                    >
-                        <UserCircleIcon className="h-5 w-5" aria-hidden />
-                        <span className="hidden sm:inline">Profilim</span>
-                    </Link>
+                    <NavAuth />
                 </div>
             </div>
         </header>

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import Guard from "@/components/auth/Guard";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080";
 
@@ -267,6 +268,7 @@ export default function SellPage() {
   };
 
   return (
+    <Guard>
     <div className="min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
       {/* HERO mini */}
       <section className="border-b border-neutral-200 dark:border-white/10">
@@ -560,6 +562,7 @@ export default function SellPage() {
         )}
       </section>
     </div>
+    </Guard>
   );
 }
 

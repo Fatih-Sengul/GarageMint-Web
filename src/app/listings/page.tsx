@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useListingsSearch, type ListingsSearchParams } from "@/lib/queries/listings";
+import { useListings, type ListingsSearchParams } from "@/lib/queries/listings";
 import ListingCard from "@/components/listings/ListingCard";
 import ListingFilters, { type Filters } from "@/components/listings/ListingFilters";
 
@@ -10,7 +10,7 @@ export default function ListingsPage() {
         page: 0, size: 24, sortBy: "createdAt", sortDir: "DESC",
     });
 
-    const { data, isLoading, isError } = useListingsSearch(params);
+    const { data, isLoading, isError } = useListings(params);
     const page = data?.number ?? 0;
     const totalPages = data?.totalPages ?? 0;
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMyProfile, useInitMyProfile } from "@/lib/queries/profile";
 import FollowPanel from "@/components/me/FollowPanel";
+import Guard from "@/components/auth/Guard";
 
 import ProfileHeader from "@/components/me/ProfileHeader";
 import ProfileForm from "@/components/me/ProfileForm";
@@ -17,33 +18,37 @@ export default function MePage() {
 
     if (isLoading) {
         return (
-            <div className="mx-auto max-w-6xl px-4 py-10">
-                <div className="text-sm text-neutral-400">Yükleniyor…</div>
-            </div>
+            <Guard>
+                <div className="mx-auto max-w-6xl px-4 py-10">
+                    <div className="text-sm text-neutral-400">Yükleniyor…</div>
+                </div>
+            </Guard>
         );
     }
 
     // Profil yoksa başlat
     if (isError || !data) {
         return (
-            <div className="mx-auto max-w-3xl px-4 py-16 grid gap-4">
-                <h1 className="text-2xl font-bold">Profil bulunamadı</h1>
-                <p className="text-neutral-400">
-                    Henüz bir profiliniz yok gibi görünüyor. Aşağıdaki butona tıklayarak
-                    oluşturabilirsiniz.
-                </p>
-                <button
-                    onClick={() => init.mutate()}
-                    disabled={init.isPending}
-                    className="w-fit rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2 text-white disabled:opacity-60"
-                >
-                    {init.isPending ? "Oluşturuluyor…" : "Profilimi Başlat"}
-                </button>
+            <Guard>
+                <div className="mx-auto max-w-3xl px-4 py-16 grid gap-4">
+                    <h1 className="text-2xl font-bold">Profil bulunamadı</h1>
+                    <p className="text-neutral-400">
+                        Henüz bir profiliniz yok gibi görünüyor. Aşağıdaki butona tıklayarak
+                        oluşturabilirsiniz.
+                    </p>
+                    <button
+                        onClick={() => init.mutate()}
+                        disabled={init.isPending}
+                        className="w-fit rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2 text-white disabled:opacity-60"
+                    >
+                        {init.isPending ? "Oluşturuluyor…" : "Profilimi Başlat"}
+                    </button>
 
-                <Link href="/" className="text-sm text-neutral-400 hover:text-neutral-200">
-                    ← Anasayfa
-                </Link>
-            </div>
+                    <Link href="/" className="text-sm text-neutral-400 hover:text-neutral-200">
+                        ← Anasayfa
+                    </Link>
+                </div>
+            </Guard>
         );
     }
 
@@ -51,6 +56,7 @@ export default function MePage() {
     const me = data;
 
     return (
+        <Guard>
         <div className="mx-auto max-w-6xl px-4 py-6">
             {/* Breadcrumbs */}
             <nav className="mb-4 text-sm">
@@ -115,5 +121,6 @@ export default function MePage() {
                 </div>
             </div>
         </div>
+        </Guard>
     );
 }
