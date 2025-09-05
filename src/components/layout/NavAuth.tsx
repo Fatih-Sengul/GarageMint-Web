@@ -1,11 +1,21 @@
 "use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/auth/store";
 import { useLogout } from "@/lib/auth/hooks";
 
 export default function NavAuth() {
+  const [mounted, setMounted] = useState(false);
   const isAuthed = useAuthStore((s) => s.isAuthed());
   const logout = useLogout();
+
+  // Defer rendering until after hydration to avoid server/client mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   if (!isAuthed) {
     return (
