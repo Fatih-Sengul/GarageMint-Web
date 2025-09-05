@@ -43,8 +43,6 @@ export default function ListingCard({ it }: { it: ListingResponseDto }) {
                                 e.stopPropagation();
                                 const u = it.seller!.username;
                                 router.push(me?.username === u ? "/me" : `/u/${u}`);
-                                router.push(`/u/${it.seller!.username}`);
-
                             }}
                             className="cursor-pointer text-sky-400 hover:underline"
                         >

@@ -86,7 +86,7 @@ export function useListingsSearch(p: ListingsSearchParams) {
     const qs = toQuery(p);
     return useQuery({
         queryKey: qkListings.search(qs),
-        queryFn: (): Promise<Page<ListingResponseDto>> => getJSON(`/api/v1/cars/listings?${qs}`),
+        queryFn: (): Promise<Page<ListingResponseDto>> => getJSON(`/cars/listings?${qs}`),
         staleTime: 30_000,
     });
 }
@@ -94,7 +94,7 @@ export function useListingsSearch(p: ListingsSearchParams) {
 export function useListingById(id: number) {
     return useQuery({
         queryKey: qkListings.byId(id),
-        queryFn: (): Promise<ListingResponseDto> => getJSON(`/api/v1/cars/listings/${id}`),
+        queryFn: (): Promise<ListingResponseDto> => getJSON(`/cars/listings/${id}`),
         enabled: Number.isFinite(id),
         staleTime: 30_000,
     });
@@ -103,7 +103,7 @@ export function useListingById(id: number) {
 export function usePublicListing(id: number) {
     return useQuery<PublicListingDto>({
         queryKey: ["listing", id],
-        queryFn: () => getJSON(`/api/v1/cars/listings/${id}`),
+        queryFn: () => getJSON(`/cars/listings/${id}`),
         enabled: !!id,
     });
 }
@@ -112,7 +112,7 @@ export function useMyActiveListings() {
     return useQuery({
         queryKey: ["myListings", "active"],
         queryFn: async () => {
-            const data = await getJSON<MyListingMini[]>("/api/v1/cars/listings/me");
+            const data = await getJSON<MyListingMini[]>("/cars/listings/me");
             // endpoint zaten aktifleri döndürüyor; yine de filtre kalsın:
             return (data ?? []).filter((x) => x.status === "ACTIVE" && (x.isActive ?? true));
         },
@@ -120,32 +120,21 @@ export function useMyActiveListings() {
     });
 }
 
-async function getJSON<T>(url: string): Promise<T> {
-    const r = await fetch(url, { credentials: "include" });
-    if (!r.ok) throw new Error(await r.text());
-    return r.json();
+async function getJSON<T>(path: string): Promise<T> {
+    const res = await api.get<T>(path);
+    return res.data;
 }
 
-async function call<T = unknown>(method: "PUT" | "DELETE", url: string, body?: unknown): Promise<T> {
-    const r = await fetch(url, {
-        method,
-        credentials: "include",
-        headers: body ? { "Content-Type": "application/json" } : undefined,
-        body: body ? JSON.stringify(body) : undefined,
-    });
-    if (!r.ok) throw new Error(await r.text());
-    try {
-        return (await r.json()) as T;
-    } catch {
-        return null as unknown as T;
-    }
+async function call<T = unknown>(method: "PUT" | "DELETE", path: string, body?: unknown): Promise<T> {
+    const res = await api.request<T>({ url: path, method, data: body });
+    return res.status === 204 ? (null as unknown as T) : res.data;
 }
 
 /** Owner detayını çekmek için (mevcut backend endpoint) */
 export function useMyListing(id: number) {
     return useQuery<ListingResponseDto>({
         queryKey: ["myListing", id],
-        queryFn: () => getJSON(`/api/v1/cars/listings/me/${id}`),
+        queryFn: () => getJSON(`/cars/listings/me/${id}`),
         enabled: !!id,
     });
 }
@@ -153,7 +142,7 @@ export function useMyListing(id: number) {
 export function useUpdateListing(id: number) {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: (req: ListingUpdateRequest) => call("PUT", `/api/v1/listings/${id}`, req),
+        mutationFn: (req: ListingUpdateRequest) => call("PUT", `/listings/${id}`, req),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["myListing", id] });
             qc.invalidateQueries({ queryKey: ["myListings"] });
@@ -165,7 +154,7 @@ export function useUpdateListing(id: number) {
 export function useDeleteListing(id: number) {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: () => call("DELETE", `/api/v1/listings/${id}`),
+        mutationFn: () => call("DELETE", `/listings/${id}`),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["myListings"] });
             qc.invalidateQueries({ queryKey: ["listings"] });

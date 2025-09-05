@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -20,7 +21,7 @@ export default function ListingDetailPage() {
     );
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 grid gap-6">
+    <main className="mx-auto max-w-6xl px-4 py-6 space-y-6">
       <nav className="text-sm">
         <Link href="/" className="text-sky-400 hover:underline">
           Anasayfa
@@ -33,20 +34,18 @@ export default function ListingDetailPage() {
         <span className="text-neutral-300">{data.title}</span>
       </nav>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Görsel */}
-        <div className="lg:col-span-2 rounded-2xl overflow-hidden border border-white/10 bg-neutral-900">
+      <section className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 overflow-hidden rounded-2xl border border-white/10 bg-neutral-900">
           <img
             src={
               data.images?.[0]?.url ??
               "https://picsum.photos/seed/fallback/1200/800"
             }
             alt={data.title}
-            className="w-full h-[360px] object-cover"
+            className="h-[360px] w-full object-cover"
           />
         </div>
 
-        {/* Right */}
         <aside className="rounded-2xl border border-white/10 bg-neutral-900 p-5 grid gap-3">
           <h1 className="text-xl font-bold">{data.title}</h1>
           <div className="text-sm text-neutral-400">
@@ -58,7 +57,7 @@ export default function ListingDetailPage() {
             {data.location && <div>Konum: {data.location}</div>}
           </div>
           {data.type === "SALE" && data.price != null && (
-            <div className="text-2xl font-extrabold mt-2">
+            <div className="mt-2 text-2xl font-extrabold">
               {data.price} {data.currency ?? "TRY"}
             </div>
           )}
@@ -78,16 +77,14 @@ export default function ListingDetailPage() {
             </Link>
           )}
         </aside>
-      </div>
+      </section>
 
       {data.description && (
         <section className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
-          <h2 className="text-lg font-semibold mb-2">Açıklama</h2>
-          <p className="text-sm text-neutral-300 whitespace-pre-line">
-            {data.description}
-          </p>
+          <h2 className="mb-2 text-lg font-semibold">Açıklama</h2>
+          <p className="whitespace-pre-line text-sm text-neutral-300">{data.description}</p>
         </section>
       )}
-    </div>
+    </main>
   );
 }
