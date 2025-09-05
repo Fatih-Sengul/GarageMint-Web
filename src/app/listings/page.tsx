@@ -20,23 +20,30 @@ export default function ListingsPage() {
     }), [params]);
 
     return (
-        <main className="mx-auto w-full max-w-[1200px] px-4 py-6">
-            <h1 className="mb-4 text-2xl font-extrabold tracking-tight">İlanlar</h1>
+        <main className="mx-auto w-full max-w-[1200px] px-4 py-6 space-y-6">
+            <header className="space-y-1">
+                <h1 className="text-3xl font-extrabold tracking-tight">İlanlar</h1>
+                <p className="text-sm text-neutral-400">En güncel modelleri keşfedin</p>
+            </header>
 
             <ListingFilters
                 value={filters}
                 onChangeAction={(f) => setParams((s) => ({ ...s, ...f, page: 0 }))}
             />
 
-            {isLoading && <div className="mt-6 text-neutral-400">Yükleniyor…</div>}
-            {isError && <div className="mt-6 text-rose-400">Bir hata oluştu.</div>}
+            {isLoading && <div className="text-neutral-400">Yükleniyor…</div>}
+            {isError && <div className="text-rose-400">Bir hata oluştu.</div>}
 
-            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {!isLoading && !data?.content?.length && (
+                <div className="text-neutral-400">Hiç ilan bulunamadı.</div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {data?.content?.map((it) => <ListingCard key={it.id} it={it} />)}
             </div>
 
             {totalPages > 1 && (
-                <div className="mt-8 flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                     <button
                         disabled={page <= 0}
                         onClick={() => setParams((s) => ({ ...s, page: Math.max(0, (s.page ?? 0) - 1) }))}
