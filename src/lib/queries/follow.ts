@@ -7,14 +7,14 @@ export type FollowPage = { content: FollowUser[]; page: number; size: number; to
 export function useFollowers(username: string, page=0, size=20) {
   return useQuery<FollowPage>({
     queryKey: ["followers", username, page, size],
-    queryFn: async () => (await api.get(`/api/v1/follows/${username}/followers`, { params: { page, size } })).data,
+    queryFn: async () => (await api.get(`/api/v1/profiles/${username}/followers`, { params: { page, size } })).data,
     enabled: !!username,
   });
 }
 export function useFollowing(username: string, page=0, size=20) {
   return useQuery<FollowPage>({
     queryKey: ["following", username, page, size],
-    queryFn: async () => (await api.get(`/api/v1/follows/${username}/following`, { params: { page, size } })).data,
+    queryFn: async () => (await api.get(`/api/v1/profiles/${username}/following`, { params: { page, size } })).data,
     enabled: !!username,
   });
 }
