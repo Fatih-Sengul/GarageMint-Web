@@ -60,6 +60,10 @@ export default function ClientView({ slug, pageIdx }: { slug: string; pageIdx: n
         setLoading(true);
         setErr(null);
 
+        const token =
+          typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
         const theme = THEME_BY_SLUG[slug];
 
         // 1) THEME ile ara (varsa)
@@ -72,7 +76,7 @@ export default function ClientView({ slug, pageIdx }: { slug: string; pageIdx: n
           url.searchParams.set("sortBy", "createdAt");
           url.searchParams.set("sortDir", "DESC");
 
-          const res = await fetch(url.toString(), { cache: "no-store" });
+          const res = await fetch(url.toString(), { cache: "no-store", headers });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const json: PageResponse = await res.json();
           if (!canceled) setData(json);
@@ -80,7 +84,10 @@ export default function ClientView({ slug, pageIdx }: { slug: string; pageIdx: n
         }
 
         // 2) Tag slug çöz (yoksa): /tags -> /listings?tagIds=...
-        const tagsRes = await fetch(`${API_BASE}/api/v1/cars/tags`, { cache: "no-store" });
+        const tagsRes = await fetch(`${API_BASE}/api/v1/cars/tags`, {
+          cache: "no-store",
+          headers,
+        });
         if (!tagsRes.ok) throw new Error(`Tags HTTP ${tagsRes.status}`);
         const tags: { id: number; name: string; slug: string }[] = await tagsRes.json();
         const tag = tags.find((t) => t.slug.toLowerCase() === slug.toLowerCase());
@@ -94,7 +101,7 @@ export default function ClientView({ slug, pageIdx }: { slug: string; pageIdx: n
         url.searchParams.set("sortBy", "createdAt");
         url.searchParams.set("sortDir", "DESC");
 
-        const res2 = await fetch(url.toString(), { cache: "no-store" });
+        const res2 = await fetch(url.toString(), { cache: "no-store", headers });
         if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
         const json2: PageResponse = await res2.json();
         if (!canceled) setData(json2);

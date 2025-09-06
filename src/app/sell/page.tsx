@@ -93,9 +93,13 @@ export default function SellPage() {
         setLoadingInit(true);
         setErrorInit(null);
 
+        const token =
+          typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
         const [bRes, tRes] = await Promise.all([
-          fetch(`${API_BASE}/api/v1/cars/brands`, { cache: "no-store" }),
-          fetch(`${API_BASE}/api/v1/cars/tags`, { cache: "no-store" }),
+          fetch(`${API_BASE}/api/v1/cars/brands`, { cache: "no-store", headers }),
+          fetch(`${API_BASE}/api/v1/cars/tags`, { cache: "no-store", headers }),
         ]);
         if (!bRes.ok) throw new Error(`Brands HTTP ${bRes.status}`);
         if (!tRes.ok) throw new Error(`Tags HTTP ${tRes.status}`);
@@ -128,7 +132,14 @@ export default function SellPage() {
     }
     async function loadSeries() {
       try {
-        const res = await fetch(`${API_BASE}/api/v1/cars/series?brandId=${brandId}`, { cache: "no-store" });
+        const token =
+          typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
+        const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+
+        const res = await fetch(
+          `${API_BASE}/api/v1/cars/series?brandId=${brandId}`,
+          { cache: "no-store", headers },
+        );
         if (!res.ok) throw new Error(`Series HTTP ${res.status}`);
         const json: Series[] = await res.json();
         if (!cancel) {
@@ -138,8 +149,8 @@ export default function SellPage() {
             setForm((prev) => ({ ...prev, seriesId: undefined }));
           }
         }
-        } catch {
-          if (!cancel) setSeries([]);
+      } catch {
+        if (!cancel) setSeries([]);
       }
     }
     loadSeries();
