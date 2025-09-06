@@ -248,9 +248,13 @@ export default function SellPage() {
 
     try {
       setSubmitting(true);
+      const token = typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
       const res = await fetch(`${API_BASE}/api/v1/cars/listings`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(payload),
       });
       if (!res.ok) {

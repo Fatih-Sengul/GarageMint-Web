@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMyProfile, useInitMyProfile } from "@/lib/queries/profile";
+import { useMyProfile } from "@/lib/queries/profile";
 import FollowPanel from "@/components/me/FollowPanel";
 import Guard from "@/components/auth/Guard";
 
@@ -14,7 +14,6 @@ import MyListingsGrid from "@/components/me/MyListingsGrid";
 
 export default function MePage() {
     const { data, isLoading, isError } = useMyProfile();
-    const init = useInitMyProfile();
 
     if (isLoading) {
         return (
@@ -26,24 +25,11 @@ export default function MePage() {
         );
     }
 
-    // Profil yoksa başlat
     if (isError || !data) {
         return (
             <Guard>
                 <div className="mx-auto max-w-3xl px-4 py-16 grid gap-4">
-                    <h1 className="text-2xl font-bold">Profil bulunamadı</h1>
-                    <p className="text-neutral-400">
-                        Henüz bir profiliniz yok gibi görünüyor. Aşağıdaki butona tıklayarak
-                        oluşturabilirsiniz.
-                    </p>
-                    <button
-                        onClick={() => init.mutate()}
-                        disabled={init.isPending}
-                        className="w-fit rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2 text-white disabled:opacity-60"
-                    >
-                        {init.isPending ? "Oluşturuluyor…" : "Profilimi Başlat"}
-                    </button>
-
+                    <h1 className="text-2xl font-bold">Profil yüklenemedi</h1>
                     <Link href="/" className="text-sm text-neutral-400 hover:text-neutral-200">
                         ← Anasayfa
                     </Link>

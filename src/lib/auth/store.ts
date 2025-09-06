@@ -13,15 +13,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null,
   refreshToken: typeof window !== "undefined" ? sessionStorage.getItem("refreshToken") : null,
   userId: typeof window !== "undefined" ? Number(sessionStorage.getItem("userId")) || null : null,
-  setTokens: (a, r) => {
-    let uid: number | null = null;
-    try {
-      const payload = JSON.parse(atob(a.split(".")[1] || ""));
-      uid = payload?.userId ?? payload?.sub ?? null;
-      if (typeof uid === "string") uid = Number(uid);
-    } catch {
-      uid = null;
-    }
+    setTokens: (a, r) => {
+      let uid: number | null = null;
+      try {
+        const payload = JSON.parse(atob(a.split(".")[1] || ""));
+        uid = payload?.uid ?? payload?.userId ?? null;
+        if (typeof uid === "string") uid = Number(uid);
+      } catch {
+        uid = null;
+      }
 
     if (typeof window !== "undefined") {
       sessionStorage.setItem("accessToken", a);
