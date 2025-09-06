@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAuction, useBids, usePlaceBid } from "@/lib/queries/auction";
 import { formatCountdown, formatDateTime } from "@/lib/utils/time";
@@ -123,19 +124,35 @@ export default function AuctionDetailPage() {
         <div className="grid gap-2">
           {(bids ?? []).map((b) => (
             <div key={b.id} className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2">
-              <div className="flex items-center gap-3">
-                <img
-                  src={b.bidder?.avatarUrl ?? "/avatar-placeholder.png"}
-                  className="h-8 w-8 rounded-full object-cover"
-                  alt={b.bidder?.username ?? "user"}
-                />
-                <div className="text-sm">
-                  <div className="font-semibold">
-                    {b.bidder?.displayName ?? b.bidder?.username ?? `Kullanıcı ${b.bidderUserId}`}
+              {b.bidder?.username ? (
+                <Link href={`/u/${b.bidder.username}`} className="flex items-center gap-3">
+                  <img
+                    src={b.bidder?.avatarUrl ?? "/avatar-placeholder.png"}
+                    className="h-8 w-8 rounded-full object-cover"
+                    alt={b.bidder?.username ?? "user"}
+                  />
+                  <div className="text-sm">
+                    <div className="font-semibold">
+                      {b.bidder?.displayName ?? b.bidder?.username}
+                    </div>
+                    <div className="text-xs text-neutral-400">{formatDateTime(b.createdAt)}</div>
                   </div>
-                  <div className="text-xs text-neutral-400">{formatDateTime(b.createdAt)}</div>
+                </Link>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <img
+                    src={b.bidder?.avatarUrl ?? "/avatar-placeholder.png"}
+                    className="h-8 w-8 rounded-full object-cover"
+                    alt={b.bidder?.username ?? "user"}
+                  />
+                  <div className="text-sm">
+                    <div className="font-semibold">
+                      {b.bidder?.displayName ?? b.bidder?.username ?? `Kullanıcı ${b.bidderUserId}`}
+                    </div>
+                    <div className="text-xs text-neutral-400">{formatDateTime(b.createdAt)}</div>
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="text-sm font-bold">{Number(b.amount).toFixed(2)} {auction.currency}</div>
             </div>
           ))}
