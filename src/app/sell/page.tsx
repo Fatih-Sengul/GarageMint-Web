@@ -95,7 +95,10 @@ export default function SellPage() {
 
         const token =
           typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const headers: Record<string, string> = {};
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
 
         const [bRes, tRes] = await Promise.all([
           fetch(`${API_BASE}/api/v1/cars/brands`, { cache: "no-store", headers }),
@@ -134,7 +137,10 @@ export default function SellPage() {
       try {
         const token =
           typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
-        const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+        const headers: Record<string, string> = {};
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
 
         const res = await fetch(
           `${API_BASE}/api/v1/cars/series?brandId=${brandId}`,
@@ -260,12 +266,15 @@ export default function SellPage() {
     try {
       setSubmitting(true);
       const token = typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
       const res = await fetch(`${API_BASE}/api/v1/cars/listings`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers,
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
