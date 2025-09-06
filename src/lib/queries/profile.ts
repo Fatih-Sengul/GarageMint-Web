@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import api from "@/lib/api";
+import { useAuthStore } from "@/lib/auth/store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
     ProfileOwnerDto, ProfilePublicDto, ProfileUpdateRequest,
@@ -9,16 +9,6 @@ import type {
     NotificationSettingsDto, NotificationSettingsUpdateRequest,
     ProfileLinkDto, UsernameAvailabilityDto, UsernameSuggestionsDto,
 } from "@/lib/types/profile";
-
-// Fetch helpers for public profile and follow APIs
-// These use the axios `api` instance so that requests are sent to the backend
-// base URL instead of the Next.js dev server. Previously `fetch` was called
-// with relative paths which resulted in 404 responses from the UI when the
-// backend actually had the data.
-async function getJSON<T>(url: string): Promise<T> {
-    const r = await api.get<T>(url);
-    return r.data;
-}
 
 export const qk = {
     me: ["myProfile"] as const,
@@ -30,17 +20,18 @@ export const qk = {
     usernameSuggest: (b?: string) => ["profile", "usernameSuggest", b ?? ""] as const,
 };
 
-function useAccessToken() {
-    const [t, setT] = React.useState<string | null>(null);
-    React.useEffect(() => {
-        const match = document.cookie.match(/(?:^|; )accessToken=([^;]*)/);
-        setT(match ? decodeURIComponent(match[1]) : null);
-    }, []);
-    return t;
+// Fetch helpers for public profile and follow APIs
+// These use the axios `api` instance so that requests are sent to the backend
+// base URL instead of the Next.js dev server. Previously `fetch` was called
+// with relative paths which resulted in 404 responses from the UI when the
+// backend actually had the data.
+async function getJSON<T>(url: string): Promise<T> {
+    const r = await api.get<T>(url);
+    return r.data;
 }
 
 export function useMyProfile() {
-    const token = useAccessToken();
+    const token = useAuthStore((s) => s.accessToken);
     return useQuery<ProfileOwnerDto>({
         queryKey: qk.me,
         enabled: !!token,

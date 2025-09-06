@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import Guard from "@/components/auth/Guard";
 import { useAuthStore } from "@/lib/auth/store";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080";
+import api from "@/lib/api";
 
 /* ==== Types aligned to BE DTOs ==== */
 type Brand = { id: number; name: string; slug: string; country?: string | null };
@@ -95,22 +94,13 @@ export default function SellPage() {
         setLoadingInit(true);
         setErrorInit(null);
 
-        const headers: Record<string, string> = {};
-        if (accessToken) {
-          headers.Authorization = `Bearer ${accessToken}`;
-        }
-
         const [bRes, tRes] = await Promise.all([
-          fetch(`${API_BASE}/api/v1/cars/brands`, { cache: "no-store", headers }),
-          fetch(`${API_BASE}/api/v1/cars/tags`, { cache: "no-store", headers }),
+          api.get<Brand[]>("/api/v1/cars/brands"),
+          api.get<Tag[]>("/api/v1/cars/tags"),
         ]);
-        if (!bRes.ok) throw new Error(`Brands HTTP ${bRes.status}`);
-        if (!tRes.ok) throw new Error(`Tags HTTP ${tRes.status}`);
-
-        const [bJson, tJson]: [Brand[], Tag[]] = await Promise.all([bRes.json(), tRes.json()]);
         if (!cancel) {
-          setBrands(bJson);
-          setTags(tJson);
+          setBrands(bRes.data);
+          setTags(tRes.data);
         }
         } catch (e: unknown) {
           if (!cancel) setErrorInit(e instanceof Error ? e.message : "Başlangıç verileri alınamadı");
@@ -135,18 +125,9 @@ export default function SellPage() {
     }
     async function loadSeries() {
       try {
-        const headers: Record<string, string> = {};
-        if (accessToken) {
-          headers.Authorization = `Bearer ${accessToken}`;
-        }
-
-        const res = await fetch(
-          `${API_BASE}/api/v1/cars/series?brandId=${brandId}`,
-          { cache: "no-store", headers },
-        );
-        if (!res.ok) throw new Error(`Series HTTP ${res.status}`);
-        const json: Series[] = await res.json();
+        const res = await api.get<Series[]>("/api/v1/cars/series", { params: { brandId } });
         if (!cancel) {
+          const json = res.data;
           setSeries(json);
           // seçili seri bu brand altında yoksa temizle
           if (!json.find((s) => s.id === form.seriesId)) {
@@ -263,22 +244,7 @@ export default function SellPage() {
 
     try {
       setSubmitting(true);
-      const token = typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-      const res = await fetch(`${API_BASE}/api/v1/cars/listings`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const msg = `HTTP ${res.status}`;
-        throw new Error(msg);
-      }
+      await api.post("/api/v1/cars/listings", payload);
       setNotify({ type: "success", text: "İlan oluşturuldu." });
       // kısa bir gecikme ile /me'ye götürelim
       setTimeout(() => router.push("/me"), 600);
