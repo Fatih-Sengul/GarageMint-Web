@@ -1,23 +1,29 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLogin } from "@/lib/auth/hooks";
 
 export default function LoginForm() {
   const m = useLogin();
+  const router = useRouter();
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await m.mutateAsync({ emailOrUsername, password });
+      router.replace("/me");
+    } catch {
+      /* error handled by hook */
+    }
+  };
 
   return (
     <div className="mx-auto max-w-sm px-4 py-16">
       <h1 className="text-2xl font-extrabold">Giriş Yap</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          m.mutate({ emailOrUsername, password });
-        }}
-        className="mt-6 grid gap-3"
-      >
+      <form onSubmit={submit} className="mt-6 grid gap-3">
         <input
           className="input"
           placeholder="E-posta veya kullanıcı adı"
