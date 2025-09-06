@@ -57,6 +57,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   isAuthed: () => {
     if (typeof window === "undefined") return false;
-    return !!getCookie("accessToken");
+    return !!get().accessToken;
   },
 }));
