@@ -1,6 +1,14 @@
 "use client";
 import { ThemeProvider } from "@primer/react";
 import {
+    MutationCache,
+    QueryCache,
+    QueryClient,
+    QueryClientProvider,
+} from "@tanstack/react-query";
+import React from "react";
+import { ToastProvider, useToast } from "@/components/ui/toast";
+import { AxiosError } from "axios";
 
   QueryClient,
   QueryClientProvider,
@@ -35,7 +43,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       </ToastProvider>
     </ThemeProvider>
   );
-=======
     MutationCache,
     QueryCache,
     QueryClient,

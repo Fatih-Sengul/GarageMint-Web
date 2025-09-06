@@ -2,6 +2,8 @@ import React from "react";
 import { render, waitFor } from "@testing-library/react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { describe, test, expect, vi, beforeEach } from "vitest";
+
 
 const pushMock = vi.fn();
 vi.mock("../components/ui/toast", () => ({
@@ -18,6 +20,8 @@ describe("Providers QueryClient error handling", () => {
     function QueryErr() {
       const err = new AxiosError(
         "oops",
+        undefined,
+        { headers: {} },
         undefined,
         {},
         {},
