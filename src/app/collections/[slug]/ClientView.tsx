@@ -62,7 +62,9 @@ export default function ClientView({ slug, pageIdx }: { slug: string; pageIdx: n
 
         const token =
           typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const headers: HeadersInit = token
+          ? { Authorization: `Bearer ${token}` }
+          : {};
 
         const theme = THEME_BY_SLUG[slug];
 
