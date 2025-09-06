@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
+import { z } from "zod";
 import { useLogin } from "@/lib/auth/hooks";
 
 export default function LoginForm() {
@@ -9,16 +11,32 @@ export default function LoginForm() {
   const router = useRouter();
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const schema = z.object({
+    emailOrUsername: z.string().min(1, "E-posta veya kullanıcı adı gerekli"),
+    password: z.string().min(1, "Şifre gerekli"),
+  });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const r = schema.safeParse({ emailOrUsername, password });
+    if (!r.success) {
+      setFormError(r.error.issues[0]?.message ?? "Geçersiz giriş");
+      return;
+    }
+    setFormError(null);
     try {
-      await m.mutateAsync({ emailOrUsername, password });
+      await m.mutateAsync(r.data);
       router.replace("/me");
     } catch {
       /* error handled by hook */
     }
   };
+
+  const backendMessage =
+    (m.error as AxiosError<{ message?: string }> | undefined)?.response?.data
+      ?.message || (m.error as any)?.message;
 
   return (
     <div className="mx-auto max-w-sm px-4 py-16">
@@ -53,8 +71,14 @@ export default function LoginForm() {
           Kayıt ol
         </Link>
       </p>
+      {formError && (
+        <p className="mt-2 text-sm text-red-400">{formError}</p>
+      )}
       {m.isError && (
-        <p className="mt-2 text-sm text-red-400">Giriş başarısız</p>
+        <p className="mt-2 text-sm text-red-400">
+          Giriş başarısız
+          {backendMessage ? `: ${backendMessage}` : ""}
+        </p>
       )}
     </div>
   );
