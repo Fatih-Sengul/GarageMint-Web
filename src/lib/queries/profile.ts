@@ -3,6 +3,7 @@
 import React from "react";
 import api from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "@/lib/auth/store";
 import type {
     ProfileOwnerDto, ProfilePublicDto, ProfileUpdateRequest,
     ProfilePrefsDto, ProfilePrefsUpdateRequest,
@@ -38,10 +39,12 @@ function useAccessToken() {
 
 export function useMyProfile() {
     const token = useAccessToken();
+    const userId = useAuthStore((s) => s.userId);
     return useQuery<ProfileOwnerDto>({
         queryKey: qk.me,
-        enabled: !!token,
-        queryFn: async () => (await api.get("/api/v1/profiles/me")).data,
+        enabled: !!token && userId != null,
+        queryFn: async () =>
+            (await api.get("/api/v1/profiles/me", { params: { userId } })).data,
         retry: (count, err: any) => {
             const s = err?.response?.status;
             if (s === 401 || s === 403) return false;
@@ -66,38 +69,46 @@ export function useSuggestUsername(base?: string) {
 
 export function useInitMyProfile() {
     const qc = useQueryClient();
+    const userId = useAuthStore((s) => s.userId);
     return useMutation<ProfileOwnerDto, unknown, void>({
-        mutationFn: async () => (await api.post("/api/v1/profiles/me/init")).data,
+        mutationFn: async () =>
+            (await api.post("/api/v1/profiles/me/init", null, { params: { userId } })).data,
         onSuccess: () => { qc.invalidateQueries({ queryKey: qk.me }); },
     });
 }
 export function useUpdateMyProfile() {
     const qc = useQueryClient();
+    const userId = useAuthStore((s) => s.userId);
     return useMutation<ProfileOwnerDto, unknown, ProfileUpdateRequest>({
-        mutationFn: async (req) => (await api.put("/api/v1/profiles/me", req)).data,
+        mutationFn: async (req) =>
+            (await api.put("/api/v1/profiles/me", req, { params: { userId } })).data,
         onSuccess: (data) => { qc.setQueryData(qk.me, data); },
     });
 }
 export function useUpdateMyAvatar() {
     const qc = useQueryClient();
+    const userId = useAuthStore((s) => s.userId);
     return useMutation<ProfileOwnerDto, unknown, { avatarUrl: string }>({
         mutationFn: async ({ avatarUrl }) =>
-            (await api.put("/api/v1/profiles/me/avatar", null, { params: { avatarUrl } })).data,
+            (await api.put("/api/v1/profiles/me/avatar", null, { params: { userId, avatarUrl } })).data,
         onSuccess: () => { qc.invalidateQueries({ queryKey: qk.me }); },
     });
 }
 export function useUpdateMyBanner() {
     const qc = useQueryClient();
+    const userId = useAuthStore((s) => s.userId);
     return useMutation<ProfileOwnerDto, unknown, { bannerUrl: string }>({
         mutationFn: async ({ bannerUrl }) =>
-            (await api.put("/api/v1/profiles/me/banner", null, { params: { bannerUrl } })).data,
+            (await api.put("/api/v1/profiles/me/banner", null, { params: { userId, bannerUrl } })).data,
         onSuccess: () => { qc.invalidateQueries({ queryKey: qk.me }); },
     });
 }
 export function useUpdateMyPrefs() {
     const qc = useQueryClient();
+    const userId = useAuthStore((s) => s.userId);
     return useMutation<ProfilePrefsDto, unknown, ProfilePrefsUpdateRequest>({
-        mutationFn: async (req) => (await api.put("/api/v1/profiles/me/prefs", req)).data,
+        mutationFn: async (req) =>
+            (await api.put("/api/v1/profiles/me/prefs", req, { params: { userId } })).data,
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: qk.me });
             qc.invalidateQueries({ queryKey: qk.prefs });
@@ -106,8 +117,10 @@ export function useUpdateMyPrefs() {
 }
 export function useUpdateMyNotifications() {
     const qc = useQueryClient();
+    const userId = useAuthStore((s) => s.userId);
     return useMutation<NotificationSettingsDto, unknown, NotificationSettingsUpdateRequest>({
-        mutationFn: async (req) => (await api.put("/api/v1/profiles/me/notifications", req)).data,
+        mutationFn: async (req) =>
+            (await api.put("/api/v1/profiles/me/notifications", req, { params: { userId } })).data,
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: qk.me });
             qc.invalidateQueries({ queryKey: qk.notif });
@@ -116,8 +129,10 @@ export function useUpdateMyNotifications() {
 }
 export function useUpdateMyLinks() {
     const qc = useQueryClient();
+    const userId = useAuthStore((s) => s.userId);
     return useMutation<ProfileLinkDto[], unknown, ProfileLinkDto[]>({
-        mutationFn: async (links) => (await api.put("/api/v1/profiles/me/links", links)).data,
+        mutationFn: async (links) =>
+            (await api.put("/api/v1/profiles/me/links", links, { params: { userId } })).data,
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: qk.me });
             qc.invalidateQueries({ queryKey: qk.links });
@@ -127,12 +142,14 @@ export function useUpdateMyLinks() {
 
 export function useUploadMyAvatar() {
     const qc = useQueryClient();
+    const userId = useAuthStore((s) => s.userId);
     return useMutation<ProfileOwnerDto, Error, File>({
         mutationFn: async (file) => {
             const fd = new FormData();
             fd.append("file", file);
             const res = await api.post("/api/v1/profiles/me/avatar/upload", fd, {
                 headers: { "Content-Type": "multipart/form-data" },
+                params: { userId },
             });
             return res.data;
         },
@@ -144,12 +161,14 @@ export function useUploadMyAvatar() {
 
 export function useUploadMyBanner() {
     const qc = useQueryClient();
+    const userId = useAuthStore((s) => s.userId);
     return useMutation<ProfileOwnerDto, Error, File>({
         mutationFn: async (file) => {
             const fd = new FormData();
             fd.append("file", file);
             const res = await api.post("/api/v1/profiles/me/banner/upload", fd, {
                 headers: { "Content-Type": "multipart/form-data" },
+                params: { userId },
             });
             return res.data;
         },
