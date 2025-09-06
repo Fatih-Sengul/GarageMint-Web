@@ -13,7 +13,7 @@ import { usePublicProfile } from "@/lib/queries/profile";
 export default function PublicProfilePage() {
   const { username } = useParams<{ username: string }>();
   const me = useMyProfile?.().data; // me hook'unuz nasıl export ediliyorsa öyle kullanın
-  const { data: p, isLoading, isError } = usePublicProfile(username, me?.userId);
+  const { data: p, isLoading, isError } = usePublicProfile(username);
 
   const [open, setOpen] = React.useState<null | "followers" | "following">(null);
 
