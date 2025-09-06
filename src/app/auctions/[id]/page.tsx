@@ -6,10 +6,23 @@ import { formatCountdown, formatDateTime } from "@/lib/utils/time";
 import { trAuctionStatus } from "@/lib/utils/i18n";
 import { useMemo, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useAuthStore } from "@/lib/auth/store";
+import SignupPromptModal from "@/components/auth/SignupPromptModal";
 
 export default function AuctionDetailPage() {
   const params = useParams(); // { id: "123" }
   const id = Number(params?.id);
+  const isAuthed = useAuthStore((s) => s.isAuthed());
+  if (!isAuthed) {
+    return (
+      <SignupPromptModal
+        open={true}
+        onClose={() => {
+          if (typeof window !== "undefined") window.location.href = "/";
+        }}
+      />
+    );
+  }
   const { data: auction } = useAuction(id);
   const { data: bids } = useBids(id);
   const mBid = usePlaceBid(id);
