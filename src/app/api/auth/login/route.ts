@@ -13,8 +13,12 @@ export async function POST(req: NextRequest) {
   const data = await r.json();
   const res = NextResponse.json(data, { status: r.status });
   if (r.ok) {
+    // Make accessToken readable by the client so that Axios can attach it
+    // to the Authorization header on subsequent requests. Keeping it
+    // non-HttpOnly allows hooks like `useMyProfile` and the sell page to
+    // access the token via `document.cookie`.
     res.cookies.set("accessToken", data.accessToken, {
-      httpOnly: true,
+      httpOnly: false,
       sameSite: "lax",
       path: "/",
     });
