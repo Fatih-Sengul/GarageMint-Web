@@ -2,9 +2,23 @@
 import Link from "next/link";
 import { useAuctions } from "@/lib/queries/auction";
 import AuctionCard from "@/components/auction/AuctionCard";
+import { useAuthStore } from "@/lib/auth/store";
+import SignupPromptModal from "@/components/auth/SignupPromptModal";
 
 export default function AuctionsPage() {
+  const isAuthed = useAuthStore((s) => s.isAuthed());
   const { data, isLoading, isError } = useAuctions();
+
+  if (!isAuthed) {
+    return (
+      <SignupPromptModal
+        open={true}
+        onClose={() => {
+          if (typeof window !== "undefined") window.location.href = "/";
+        }}
+      />
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 grid gap-6">
@@ -20,7 +34,7 @@ export default function AuctionsPage() {
         <div className="min-w-0">
           <h1 className="text-2xl font-extrabold">Mezatlar</h1>
           <p className="text-sm text-neutral-400">
-            Buradan açık artırmalara katıl, koleksiyonunu büyütürken rekabetin keyfini yaşa. 
+            Buradan açık artırmalara katıl, koleksiyonunu büyütürken rekabetin keyfini yaşa.
             Minimum teklif artışı <b>10 TL</b>’dir; son teklifi en az 10 TL geçmen gerekir.
           </p>
         </div>
