@@ -32,7 +32,10 @@ export const qk = {
 
 function useAccessToken() {
     const [t, setT] = React.useState<string | null>(null);
-    React.useEffect(() => setT(sessionStorage.getItem("accessToken")), []);
+    React.useEffect(() => {
+        const match = document.cookie.match(/(?:^|; )accessToken=([^;]*)/);
+        setT(match ? decodeURIComponent(match[1]) : null);
+    }, []);
     return t;
 }
 
