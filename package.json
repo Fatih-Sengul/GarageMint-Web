@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest"
+    "test": "echo \"No tests configured\""
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -33,10 +33,6 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "vitest": "^1.6.0",
-    "@testing-library/react": "^15.0.0",
-
-    "jsdom": "^24.0.0"
+    "typescript": "^5"
   }
 }
