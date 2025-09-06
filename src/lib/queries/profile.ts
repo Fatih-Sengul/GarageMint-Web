@@ -1,6 +1,7 @@
 "use client";
 
 import api from "@/lib/api";
+import { useAuthStore } from "@/lib/auth/store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
     ProfileOwnerDto, ProfilePublicDto, ProfileUpdateRequest,
@@ -30,9 +31,11 @@ export const qk = {
 };
 
 export function useMyProfile() {
+    const userId = useAuthStore((s) => s.userId);
     return useQuery<ProfileOwnerDto>({
         queryKey: qk.me,
-        queryFn: async () => (await api.get("/api/v1/profiles/me")).data,
+        queryFn: async () => (await api.get("/api/v1/profiles", { params: { userId } })).data,
+        enabled: userId != null,
     });
 }
 export function useCheckUsername(u: string) {
