@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 
+
 const pushMock = vi.fn();
 vi.mock("../components/ui/toast", () => ({
   useToast: () => ({ push: pushMock }),
@@ -22,6 +23,8 @@ describe("Providers QueryClient error handling", () => {
         undefined,
         { headers: {} },
         undefined,
+        {},
+        {},
         { data: { message: "axios fail" }, status: 400, statusText: "", headers: {}, config: {} }
       );
       useQuery({ queryKey: ["q"], queryFn: async () => { throw err; } });

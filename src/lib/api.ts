@@ -1,17 +1,27 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
+function getCookie(name: string): string | null {
+  if (typeof window === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function delCookie(name: string) {
+  if (typeof window === "undefined") return;
+  document.cookie = `${name}=; Max-Age=0; path=/`;
+}
+
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
 const api = axios.create({
   baseURL: API_BASE,
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
-    const token = sessionStorage.getItem("accessToken");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-  }
+  const token = getCookie("accessToken");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
@@ -32,30 +42,36 @@ api.interceptors.response.use(
       refreshing = true;
       original._retry = true;
 
-      try {
-        const rt = sessionStorage.getItem("refreshToken");
-        if (!rt) throw new Error("No refresh token");
-        const r = await axios.post(`${API_BASE}/api/v1/auth/refresh`, { refreshToken: rt });
-        sessionStorage.setItem("accessToken", r.data.accessToken);
-        if (r.data.refreshToken) sessionStorage.setItem("refreshToken", r.data.refreshToken);
-        refreshing = false;
-        queue.forEach((resume) => resume());
-        queue = [];
-        return api(original);
-      } catch (e) {
-        refreshing = false;
-        queue = [];
-        if (typeof window !== "undefined") {
-          sessionStorage.removeItem("accessToken");
-          sessionStorage.removeItem("refreshToken");
-          location.href = "/login";
+        try {
+          const r = await axios.post("/api/auth/refresh");
+          api.defaults.headers.common.Authorization = `Bearer ${r.data.accessToken}`;
+          refreshing = false;
+          queue.forEach((resume) => resume());
+          queue = [];
+          return api(original);
+        } catch (e) {
+          refreshing = false;
+          queue = [];
+          delCookie("accessToken");
+          delCookie("refreshToken");
+          if (typeof window !== "undefined") location.href = "/login";
+          throw e;
         }
-        throw e;
       }
-    }
 
     throw err;
   }
 );
+
+export function getErrorMessage(err: unknown): string {
+  if (axios.isAxiosError(err)) {
+    const data = err.response?.data as any;
+    if (typeof data === "string") return data;
+    if (data && typeof data.message === "string") return data.message;
+    return err.message;
+  }
+  if (err instanceof Error) return err.message;
+  return typeof err === "string" ? err : "Bilinmeyen hata";
+}
 
 export default api;
