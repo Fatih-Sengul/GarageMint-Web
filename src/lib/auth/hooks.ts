@@ -11,7 +11,7 @@ export function useLogin() {
     },
     onSuccess: (d) => {
       setTokens(d.accessToken, d.refreshToken);
-      window.location.href = "/";
+      api.defaults.headers.common.Authorization = `Bearer ${d.accessToken}`;
     },
   });
 }

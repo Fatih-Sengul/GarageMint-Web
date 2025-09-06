@@ -1,7 +1,7 @@
 "use client";
 
+import React from "react";
 import api from "@/lib/api";
-import { useAuthStore } from "@/lib/auth/store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
     ProfileOwnerDto, ProfilePublicDto, ProfileUpdateRequest,
@@ -30,12 +30,23 @@ export const qk = {
     usernameSuggest: (b?: string) => ["profile", "usernameSuggest", b ?? ""] as const,
 };
 
+function useAccessToken() {
+    const [t, setT] = React.useState<string | null>(null);
+    React.useEffect(() => setT(sessionStorage.getItem("accessToken")), []);
+    return t;
+}
+
 export function useMyProfile() {
-    const userId = useAuthStore((s) => s.userId);
+    const token = useAccessToken();
     return useQuery<ProfileOwnerDto>({
         queryKey: qk.me,
-        queryFn: async () => (await api.get("/api/v1/profiles", { params: { userId } })).data,
-        enabled: userId != null,
+        enabled: !!token,
+        queryFn: async () => (await api.get("/api/v1/profiles/me")).data,
+        retry: (count, err: any) => {
+            const s = err?.response?.status;
+            if (s === 401 || s === 403) return false;
+            return count < 1;
+        },
     });
 }
 export function useCheckUsername(u: string) {
