@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import Guard from "@/components/auth/Guard";
+import { useAuthStore } from "@/lib/auth/store";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080";
 
@@ -53,6 +54,7 @@ function Note({ children }: { children: React.ReactNode }) {
 /* ==== Page ==== */
 export default function SellPage() {
   const router = useRouter();
+  const accessToken = useAuthStore((s) => s.accessToken);
 
   const [brands, setBrands] = useState<Brand[]>([]);
   const [series, setSeries] = useState<Series[]>([]);
@@ -93,11 +95,9 @@ export default function SellPage() {
         setLoadingInit(true);
         setErrorInit(null);
 
-        const token =
-          typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
         const headers: Record<string, string> = {};
-        if (token) {
-          headers.Authorization = `Bearer ${token}`;
+        if (accessToken) {
+          headers.Authorization = `Bearer ${accessToken}`;
         }
 
         const [bRes, tRes] = await Promise.all([
@@ -122,7 +122,7 @@ export default function SellPage() {
     return () => {
       cancel = true;
     };
-  }, []);
+  }, [accessToken]);
 
   /* ==== Dependent: series by brand ==== */
   useEffect(() => {
@@ -135,11 +135,9 @@ export default function SellPage() {
     }
     async function loadSeries() {
       try {
-        const token =
-          typeof window !== "undefined" ? sessionStorage.getItem("accessToken") : null;
         const headers: Record<string, string> = {};
-        if (token) {
-          headers.Authorization = `Bearer ${token}`;
+        if (accessToken) {
+          headers.Authorization = `Bearer ${accessToken}`;
         }
 
         const res = await fetch(
@@ -163,7 +161,7 @@ export default function SellPage() {
     return () => {
       cancel = true;
     };
-  }, [form.brandId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [form.brandId, accessToken]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ==== Handlers ==== */
   const onText =

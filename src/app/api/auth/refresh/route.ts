@@ -15,8 +15,10 @@ export async function POST(req: NextRequest) {
   const data = await r.json();
   const res = NextResponse.json(data, { status: r.status });
   if (r.ok) {
+    // Expose the new access token to the client so Axios can pick it up
+    // and refresh authenticated requests without requiring a page reload.
     res.cookies.set("accessToken", data.accessToken, {
-      httpOnly: true,
+      httpOnly: false,
       sameSite: "lax",
       path: "/",
     });
