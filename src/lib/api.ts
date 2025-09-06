@@ -58,4 +58,15 @@ api.interceptors.response.use(
   }
 );
 
+export function getErrorMessage(err: unknown): string {
+  if (axios.isAxiosError(err)) {
+    const data = err.response?.data as any;
+    if (typeof data === "string") return data;
+    if (data && typeof data.message === "string") return data.message;
+    return err.message;
+  }
+  if (err instanceof Error) return err.message;
+  return typeof err === "string" ? err : "Bilinmeyen hata";
+}
+
 export default api;
