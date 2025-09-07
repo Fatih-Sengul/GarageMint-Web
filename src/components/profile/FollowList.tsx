@@ -9,8 +9,8 @@ export function FollowersList({ username }: { username: string }) {
   if (isLoading) return <p className="text-sm text-neutral-400">Yükleniyor…</p>;
   if (isError) return <p className="text-sm text-red-400">Takipçiler alınamadı.</p>;
 
-  if (!data?.content?.length) return <p className="text-sm text-neutral-400">Takipçi yok.</p>;
-  return <UserList items={data.content} />;
+  if (!data?.items?.length) return <p className="text-sm text-neutral-400">Takipçi yok.</p>;
+  return <UserList items={data.items} />;
 }
 
 export function FollowingList({ username }: { username: string }) {
@@ -18,8 +18,8 @@ export function FollowingList({ username }: { username: string }) {
   if (isLoading) return <p className="text-sm text-neutral-400">Yükleniyor…</p>;
   if (isError) return <p className="text-sm text-red-400">Takip edilenler alınamadı.</p>;
 
-  if (!data?.content?.length) return <p className="text-sm text-neutral-400">Kimseyi takip etmiyorsun.</p>;
-  return <UserList items={data.content} />;
+  if (!data?.items?.length) return <p className="text-sm text-neutral-400">Kimseyi takip etmiyorsun.</p>;
+  return <UserList items={data.items} />;
 }
 
 function UserList({ items }: { items: {username:string;displayName?:string|null;avatarUrl?:string|null;isVerified?:boolean|null}[] }) {
