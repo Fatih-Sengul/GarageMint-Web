@@ -17,6 +17,13 @@ export const useAuctions = (params?: Record<string, unknown>) =>
     queryFn: async () => (await api.get("/api/v1/auctions", { params })).data,
   });
 
+export const useAuctionsBySeller = (userId?: number) =>
+  useQuery<AuctionListItemDto[]>({
+    queryKey: ["auctions", "seller", userId ?? "me"],
+    queryFn: async () =>
+      (await api.get("/api/v1/auctions/seller", { params: userId ? { userId } : undefined })).data,
+  });
+
 export const useAuction = (id: number) =>
   useQuery<AuctionResponseDto>({
     queryKey: ["auction", id],

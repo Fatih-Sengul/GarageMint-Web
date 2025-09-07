@@ -1,9 +1,20 @@
 import AuctionCard from "@/components/auction/AuctionCard";
+import { useAuctionsBySeller } from "@/lib/queries/auction";
 import type { ProfileOwnerDto } from "@/lib/types/profile";
 import Link from "next/link";
 
 export default function MyAuctionsGrid({ me }: { me: ProfileOwnerDto }) {
-    const items = me.auctions ?? [];
+    const { data, isLoading, isError } = useAuctionsBySeller();
+    const items = data ?? [];
+
+    if (isLoading) {
+        return <p className="text-sm text-neutral-400">Yükleniyor…</p>;
+    }
+
+    if (isError) {
+        return <p className="text-sm text-red-400">Mezatlar alınamadı.</p>;
+    }
+
     if (!items.length) {
         if (!me.listings?.length) {
             return (
