@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAuction, useBids, usePlaceBid } from "@/lib/queries/auction";
+import { useMyProfile } from "@/lib/queries/profile";
 import { formatCountdown, formatDateTime } from "@/lib/utils/time";
 import { trAuctionStatus } from "@/lib/utils/i18n";
 import { useMemo, useState } from "react";
@@ -25,6 +26,7 @@ export default function AuctionDetailPage() {
   }
   const { data: auction } = useAuction(id);
   const { data: bids } = useBids(id);
+  const { data: me } = useMyProfile();
   const mBid = usePlaceBid(id);
 
   const minNext = useMemo(() => {
@@ -89,6 +91,17 @@ export default function AuctionDetailPage() {
         <div className="lg:col-span-2 grid gap-3">
           <h1 className="text-2xl font-extrabold">{auction.title ?? `Mezat #${auction.id}`}</h1>
           <p className="text-sm text-neutral-400">{auction.description ?? "Açıklama bulunmuyor."}</p>
+          {auction.seller?.username && (
+            <div className="text-sm text-neutral-400">
+              Satıcı:{" "}
+              <Link
+                href={me?.username === auction.seller.username ? "/me" : `/u/${auction.seller.username}`}
+                className="text-sky-400 hover:underline"
+              >
+                @{auction.seller.username}
+              </Link>
+            </div>
+          )}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
             <Info label="Marka" value={auction.brand ?? "-"} />
             <Info label="Model" value={auction.model ?? "-"} />

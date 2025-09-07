@@ -11,6 +11,7 @@ export default function AuctionCard({ a }: { a: AuctionListItemDto }) {
   const cover = a.coverUrl ?? `https://picsum.photos/seed/auction${a.id}/1200/800`;
   const router = useRouter();
   const { data: me } = useMyProfile();
+  const sellerUsername = a.sellerUsername || a.seller?.username;
 
   return (
     <div>
@@ -45,24 +46,24 @@ export default function AuctionCard({ a }: { a: AuctionListItemDto }) {
               {highest === "-" ? "-" : `${Number(highest).toFixed(2)} ${a.currency}`}
             </span>
           </div>
-          {a.sellerUsername && (
+          {sellerUsername && (
             <div className="mt-2 text-xs text-neutral-400">
               Satıcı:{" "}
               <span
                 onClick={(e) => {
                   e.stopPropagation();
-                  const u = a.sellerUsername!;
+                  const u = sellerUsername!;
                   router.push(me?.username === u ? "/me" : `/u/${u}`);
                 }}
                 className="cursor-pointer text-sky-400 hover:underline"
               >
-                @{a.sellerUsername}
+                @{sellerUsername}
               </span>
             </div>
           )}
         </div>
       </Link>
-      {me?.username && me?.username === a.sellerUsername && (
+      {me && (me.username === sellerUsername || me.userId === a.sellerUserId) && (
         <div className="mt-2 flex justify-end gap-3 text-xs">
           <Link href={`/auctions/${a.id}/edit`} className="text-sky-400 hover:underline">Düzenle</Link>
         </div>
