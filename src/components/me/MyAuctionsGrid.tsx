@@ -39,6 +39,11 @@ export default function MyAuctionsGrid({ me }: { me: ProfileOwnerDto }) {
             {items.map((a) => (
                 <div key={a.id}>
                     <AuctionCard a={a} />
+                    <div className="mt-2 flex items-center justify-end text-xs text-neutral-400">
+                        <Link href={`/auctions/${a.id}/edit`} className="hover:underline">
+                            Düzenle
+                        </Link>
+                    </div>
                 </div>
             ))}
         </div>

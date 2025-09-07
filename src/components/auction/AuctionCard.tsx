@@ -63,11 +63,6 @@ export default function AuctionCard({ a }: { a: AuctionListItemDto }) {
           )}
         </div>
       </Link>
-      {me && (me.username === sellerUsername || me.userId === a.sellerUserId) && (
-        <div className="mt-2 flex justify-end gap-3 text-xs">
-          <Link href={`/auctions/${a.id}/edit`} className="text-sky-400 hover:underline">Düzenle</Link>
-        </div>
-      )}
     </div>
   );
 }
