@@ -22,7 +22,8 @@ async function getLatestAuctions() {
         `${API_BASE}/api/v1/auctions?size=4&sortBy=createdAt&sortDir=DESC`,
         { cache: "no-store" }
     );
-    return (await r.json()) ?? [];
+    const data = await r.json();
+    return data?.content ?? [];
 }
 
 export default async function HomePage() {
