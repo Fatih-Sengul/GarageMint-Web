@@ -91,7 +91,6 @@ export default function AuctionDetailPage() {
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 grid gap-3">
           <h1 className="text-2xl font-extrabold">{auction.title ?? `Mezat #${auction.id}`}</h1>
-          <p className="text-sm text-neutral-400">{auction.description ?? "Açıklama bulunmuyor."}</p>
           {sellerUsername && (
             <div className="text-sm text-neutral-400">
               Satıcı:{" "}
@@ -103,6 +102,7 @@ export default function AuctionDetailPage() {
               </Link>
             </div>
           )}
+          <p className="text-sm text-neutral-400">{auction.description ?? "Açıklama bulunmuyor."}</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
             <Info label="Marka" value={auction.brand ?? "-"} />
             <Info label="Model" value={auction.model ?? "-"} />
