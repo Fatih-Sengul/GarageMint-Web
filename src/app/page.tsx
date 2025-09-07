@@ -5,40 +5,30 @@ import {
     StarIcon,
     ArrowRightIcon,
 } from "@heroicons/react/24/outline";
+import { API_BASE } from "@/lib/api";
+import { formatCountdown } from "@/lib/utils/time";
 
-// Örnek vitrin verileri (dummy)
-const trending = [
-    {
-        id: 1,
-        title: "Nissan Skyline GT-R R34",
-        brand: "Hot Wheels",
-        price: "₺6.499",
-        img: "https://picsum.photos/seed/diecast1/1200/800",
-    },
-    {
-        id: 2,
-        title: "Porsche 911 GT3 RS",
-        brand: "Tarmac Works",
-        price: "₺4.999",
-        img: "https://picsum.photos/seed/diecast2/1200/800",
-    },
-    {
-        id: 3,
-        title: "Honda NSX Type-R",
-        brand: "INNO64",
-        price: "₺4.299",
-        img: "https://picsum.photos/seed/diecast3/1200/800",
-    },
-    {
-        id: 4,
-        title: "Toyota Supra MK4",
-        brand: "Hot Wheels Premium",
-        price: "₺5.299",
-        img: "https://picsum.photos/seed/diecast4/1200/800",
-    },
-];
+async function getLatestListings() {
+    const r = await fetch(
+        `${API_BASE}/api/v1/listings?size=4&sortBy=createdAt&sortDir=DESC`,
+        { cache: "no-store" }
+    );
+    const data = await r.json();
+    return data?.content ?? [];
+}
 
-export default function HomePage() {
+async function getLatestAuctions() {
+    const r = await fetch(
+        `${API_BASE}/api/v1/auctions?size=4&sortBy=createdAt&sortDir=DESC`,
+        { cache: "no-store" }
+    );
+    return (await r.json()) ?? [];
+}
+
+export default async function HomePage() {
+    const listings = await getLatestListings();
+    const auctions = await getLatestAuctions();
+
     return (
         <div className="min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
             {/* HERO */}
@@ -173,7 +163,7 @@ export default function HomePage() {
             <section className="mx-auto max-w-6xl px-4 pb-16">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-3xl font-extrabold text-neutral-900 dark:text-white">
-                        Şu an trend olanlar
+                        Şu An Trend Olan Takas / Satış İlanları
                     </h2>
                     <Link
                         href="/listings"
@@ -184,25 +174,27 @@ export default function HomePage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {trending.map((t) => (
+                    {listings.map((l: any) => (
                         <article
-                            key={t.id}
+                            key={l.id}
                             className="group overflow-hidden rounded-2xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-md transition-shadow"
                         >
                             <div className="relative">
                                 <img
-                                    src={t.img}
-                                    alt={`${t.brand} – ${t.title}`}
+                                    src={l.images?.[0]?.url ?? `https://picsum.photos/seed/listing${l.id}/1200/800`}
+                                    alt={`${l.brandName ?? ""} – ${l.title}`}
                                     className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                                 />
-                                <span className="absolute top-2 left-2 rounded-md bg-gradient-to-r from-sky-400 to-blue-600 text-white text-xs font-bold px-2 py-1 shadow-sm ring-1 ring-white/30">
-                  {t.brand}
-                </span>
+                                {l.brandName && (
+                                    <span className="absolute top-2 left-2 rounded-md bg-gradient-to-r from-sky-400 to-blue-600 text-white text-xs font-bold px-2 py-1 shadow-sm ring-1 ring-white/30">
+                                        {l.brandName}
+                                    </span>
+                                )}
                             </div>
                             <div className="p-4">
-                                <h3 className="font-bold">{t.title}</h3>
+                                <h3 className="font-bold">{l.title}</h3>
                                 <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                                    {t.price}
+                                    {l.type === "TRADE" ? "Takas" : l.price ? `${l.price} ${l.currency ?? ""}` : "Satış"}
                                 </p>
                             </div>
                         </article>
@@ -210,32 +202,44 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* FOOTER */}
-            <footer className="border-t border-neutral-200 dark:border-white/10 py-8 bg-white/60 dark:bg-white/[0.02] backdrop-blur">
-                <div className="mx-auto max-w-6xl px-4 flex items-center justify-between flex-wrap gap-3 text-sm text-neutral-600 dark:text-neutral-400">
-                    <p>© {new Date().getFullYear()} GarageMint</p>
-                    <nav className="flex gap-4">
-                        <Link
-                            href="/terms"
-                            className="hover:text-neutral-900 dark:hover:text-white"
-                        >
-                            Şartlar
-                        </Link>
-                        <Link
-                            href="/privacy"
-                            className="hover:text-neutral-900 dark:hover:text-white"
-                        >
-                            Gizlilik
-                        </Link>
-                        <Link
-                            href="/about"
-                            className="hover:text-neutral-900 dark:hover:text-white"
-                        >
-                            Hakkımızda
-                        </Link>
-                    </nav>
+            {/* NEW AUCTIONS GRID */}
+            <section className="mx-auto max-w-6xl px-4 pb-16">
+                <div className="mb-4 flex items-center justify-between">
+                    <h2 className="text-3xl font-extrabold text-neutral-900 dark:text-white">
+                        Yeni Gelen Mezatlar
+                    </h2>
+                    <Link
+                        href="/auctions"
+                        className="text-sm font-semibold text-sky-700 hover:text-sky-900 dark:text-sky-300 dark:hover:text-sky-200"
+                    >
+                        Tümünü gör →
+                    </Link>
                 </div>
-            </footer>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {auctions.map((a: any) => (
+                        <article
+                            key={a.id}
+                            className="group overflow-hidden rounded-2xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-md transition-shadow"
+                        >
+                            <div className="relative">
+                                <img
+                                    src={a.coverUrl ?? `https://picsum.photos/seed/auction${a.id}/1200/800`}
+                                    alt={`auction-${a.id}`}
+                                    className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                                />
+                                <span className="absolute top-2 left-2 rounded-md bg-black/70 px-2 py-1 text-xs font-semibold text-white">
+                                    {formatCountdown(a.endsAt)}
+                                </span>
+                            </div>
+                            <div className="p-4">
+                                <h3 className="font-bold">Başlangıç {Number(a.startPrice).toFixed(2)} {a.currency}</h3>
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            </section>
+
         </div>
     );
 }

@@ -149,26 +149,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* FOOTER mini */}
-      <footer className="border-t border-neutral-200 dark:border-white/10 py-8 bg-white/60 dark:bg-white/[0.02] backdrop-blur">
-        <div className="mx-auto max-w-6xl px-4 flex items-center justify-between flex-wrap gap-3 text-sm text-neutral-600 dark:text-neutral-400">
-          <p>© {new Date().getFullYear()} GarageMint</p>
-          <nav className="flex gap-4">
-            <Link href="/privacy" className="hover:text-neutral-900 dark:hover:text-white">
-              Gizlilik
-            </Link>
-            <Link href="/terms" className="hover:text-neutral-900 dark:hover:text-white">
-              Şartlar
-            </Link>
-            <a
-              href="mailto:hello@garagemint.app"
-              className="hover:text-neutral-900 dark:hover:text-white"
-            >
-              İletişim
-            </a>
-          </nav>
-        </div>
-      </footer>
     </div>
   );
 }
