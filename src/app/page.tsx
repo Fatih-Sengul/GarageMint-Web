@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { API_BASE } from "@/lib/api";
 import { formatCountdown } from "@/lib/utils/time";
+import BannerCarousel from "@/components/ui/BannerCarousel";
 
 async function getLatestListings() {
     const r = await fetch(
@@ -205,19 +206,9 @@ export default async function HomePage() {
 
             {/* NEW AUCTIONS GRID */}
             <section className="mx-auto max-w-6xl px-4 pb-16">
-                <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-3xl font-extrabold text-neutral-900 dark:text-white">
-                        Yeni Gelen Mezatlar
-                    </h2>
-                    <Link
-                        href="/auctions"
-                        className="text-sm font-semibold text-sky-700 hover:text-sky-900 dark:text-sky-300 dark:hover:text-sky-200"
-                    >
-                        Tümünü gör →
-                    </Link>
-                </div>
+                <BannerCarousel />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {auctions.map((a: any) => (
                         <article
                             key={a.id}
