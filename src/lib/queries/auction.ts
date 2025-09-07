@@ -14,20 +14,34 @@ import type {
 export const useAuctions = (params?: Record<string, unknown>) =>
   useQuery<AuctionListItemDto[]>({
     queryKey: ["auctions", params],
-    queryFn: async () => (await api.get("/api/v1/auctions", { params })).data,
+    queryFn: async () =>
+      (
+        await api.get("/api/v1/auctions", {
+          params: { include: "seller", ...(params ?? {}) },
+        })
+      ).data,
   });
 
 export const useAuctionsBySeller = (userId?: number) =>
   useQuery<AuctionListItemDto[]>({
     queryKey: ["auctions", "seller", userId ?? "me"],
     queryFn: async () =>
-      (await api.get("/api/v1/auctions/seller", { params: userId ? { userId } : undefined })).data,
+      (
+        await api.get("/api/v1/auctions/seller", {
+          params: { include: "seller", ...(userId ? { userId } : {}) },
+        })
+      ).data,
   });
 
 export const useAuction = (id: number) =>
   useQuery<AuctionResponseDto>({
     queryKey: ["auction", id],
-    queryFn: async () => (await api.get(`/api/v1/auctions/${id}`)).data,
+    queryFn: async () =>
+      (
+        await api.get(`/api/v1/auctions/${id}`, {
+          params: { include: "seller" },
+        })
+      ).data,
     enabled: !!id,
   });
 

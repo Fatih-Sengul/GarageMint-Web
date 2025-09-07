@@ -39,16 +39,17 @@ export default function AuctionDetailPage() {
     const inc = () => setAmount((v) => (v || minNext) + 10);
     const dec = () => setAmount((v) => Math.max(minNext, (v || minNext) - 10));
 
-    const imgs = (
-      auction?.images?.length
-        ? [...auction.images]
-        : [{ url: `https://picsum.photos/seed/au${id}/1600/900`, idx: 0 }]
-    ).sort((a, b) => a.idx - b.idx);
-    const [imgIdx, setImgIdx] = useState(0);
-    const prevImg = () => setImgIdx((i) => (i - 1 + imgs.length) % imgs.length);
-    const nextImg = () => setImgIdx((i) => (i + 1) % imgs.length);
+  const imgs = (
+    auction?.images?.length
+      ? [...auction.images]
+      : [{ url: `https://picsum.photos/seed/au${id}/1600/900`, idx: 0 }]
+  ).sort((a, b) => a.idx - b.idx);
+  const [imgIdx, setImgIdx] = useState(0);
+  const prevImg = () => setImgIdx((i) => (i - 1 + imgs.length) % imgs.length);
+  const nextImg = () => setImgIdx((i) => (i + 1) % imgs.length);
 
-    if (!auction) return null;
+  if (!auction) return null;
+  const sellerUsername = auction.seller?.username ?? auction.sellerUsername;
 
   const submit = () => {
     const val = amount || minNext;
@@ -91,14 +92,14 @@ export default function AuctionDetailPage() {
         <div className="lg:col-span-2 grid gap-3">
           <h1 className="text-2xl font-extrabold">{auction.title ?? `Mezat #${auction.id}`}</h1>
           <p className="text-sm text-neutral-400">{auction.description ?? "Açıklama bulunmuyor."}</p>
-          {auction.seller?.username && (
+          {sellerUsername && (
             <div className="text-sm text-neutral-400">
               Satıcı:{" "}
               <Link
-                href={me?.username === auction.seller.username ? "/me" : `/u/${auction.seller.username}`}
+                href={me?.username === sellerUsername ? "/me" : `/u/${sellerUsername}`}
                 className="text-sky-400 hover:underline"
               >
-                @{auction.seller.username}
+                @{sellerUsername}
               </Link>
             </div>
           )}
