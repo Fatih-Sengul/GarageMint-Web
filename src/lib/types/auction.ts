@@ -23,6 +23,7 @@ export type AuctionListItemDto = {
 export type AuctionResponseDto = {
   id: number;
   sellerUserId: number;
+  sellerUsername?: string | null;
   listingId?: number | null;
   startPrice: string;
   currency: string;
