@@ -17,6 +17,7 @@ export type AuctionListItemDto = {
   coverUrl?: string | null;
   sellerUserId?: number;
   sellerUsername?: string | null;
+  seller?: ProfileMini | null;
 };
 
 export type AuctionResponseDto = {
