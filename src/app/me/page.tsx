@@ -11,6 +11,7 @@ import PrefsForm from "@/components/me/PrefsForm";
 import NotificationsForm from "@/components/me/NotificationsForm";
 import MyStats from "@/components/me/MyStats";
 import MyListingsGrid from "@/components/me/MyListingsGrid";
+import MyAuctionsGrid from "@/components/me/MyAuctionsGrid";
 
 export default function MePage() {
     const { data, isLoading, isError } = useMyProfile();
@@ -84,6 +85,12 @@ export default function MePage() {
                     <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-6">
                         <h2 className="text-xl font-semibold mb-4">İlanlarım</h2>
                         <MyListingsGrid me={me} />
+                    </section>
+
+                    {/* Mezatlarım */}
+                    <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-6">
+                        <h2 className="text-xl font-semibold mb-4">Mezatlarım</h2>
+                        <MyAuctionsGrid me={me} />
                     </section>
                 </div>
 

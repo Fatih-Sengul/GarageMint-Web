@@ -1,4 +1,5 @@
 import type { ListingResponseDto } from "./listing";
+import type { AuctionListItemDto } from "./auction";
 
 export type DigestFrequency = "DAILY" | "WEEKLY" | "MONTHLY" | "NEVER" | string;
 export type ProfileLinkType = "INSTAGRAM" | "TWITTER" | "WEBSITE" | string;
@@ -73,6 +74,7 @@ export interface ProfileOwnerDto extends ProfilePublicDto {
     followersCount?: number;
     followingCount?: number;
     listings?: ListingResponseDto[];
+    auctions?: AuctionListItemDto[];
 }
 
 export interface ProfileUpdateRequest {
