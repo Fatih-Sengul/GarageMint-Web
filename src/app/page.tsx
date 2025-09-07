@@ -23,7 +23,7 @@ async function getLatestAuctions() {
         { cache: "no-store" }
     );
     const data = await r.json();
-    return data?.content ?? [];
+    return (data?.content ?? []).slice(0, 4);
 }
 
 export default async function HomePage() {
