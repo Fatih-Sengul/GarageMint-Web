@@ -49,7 +49,7 @@ export default function AuctionDetailPage() {
   const nextImg = () => setImgIdx((i) => (i + 1) % imgs.length);
 
   if (!auction) return null;
-  const sellerUsername = auction.seller?.username ?? auction.sellerUsername;
+  const sellerUsername = auction.sellerUsername ?? auction.seller?.username;
 
   const submit = () => {
     const val = amount || minNext;

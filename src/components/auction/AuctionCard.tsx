@@ -11,7 +11,7 @@ export default function AuctionCard({ a }: { a: AuctionListItemDto }) {
   const cover = a.coverUrl ?? `https://picsum.photos/seed/auction${a.id}/1200/800`;
   const router = useRouter();
   const { data: me } = useMyProfile();
-  const sellerUsername = a.sellerUsername || a.seller?.username;
+  const sellerUsername = a.sellerUsername ?? a.seller?.username;
 
   return (
     <div
