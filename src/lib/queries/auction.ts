@@ -17,7 +17,7 @@ export const useAuctions = (params?: Record<string, unknown>) =>
     queryFn: async () =>
       (
         await api.get("/api/v1/auctions", {
-          params: { include: "seller", ...(params ?? {}) },
+          params: { ...(params ?? {}) },
         })
       ).data,
   });
@@ -28,7 +28,7 @@ export const useAuctionsBySeller = (userId?: number) =>
     queryFn: async () =>
       (
         await api.get("/api/v1/auctions/seller", {
-          params: { include: "seller", ...(userId ? { userId } : {}) },
+          params: { ...(userId ? { userId } : {}) },
         })
       ).data,
   });
@@ -38,9 +38,7 @@ export const useAuction = (id: number) =>
     queryKey: ["auction", id],
     queryFn: async () =>
       (
-        await api.get(`/api/v1/auctions/${id}`, {
-          params: { include: "seller" },
-        })
+        await api.get(`/api/v1/auctions/${id}`)
       ).data,
     enabled: !!id,
   });
