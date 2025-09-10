@@ -59,6 +59,7 @@ const toQuery = (p: ListingsSearchParams = {}) => {
     const arr = (k: string, v?: number[]) => v?.forEach(x => u.append(k, String(x)));
     const str = (k: string, v?: string | number | boolean) => (v !== undefined && v !== null && v !== "" ? u.set(k, String(v)) : null);
 
+    str("q", p.q);
     arr("brandIds", p.brandIds);
     arr("seriesIds", p.seriesIds);
     arr("tagIds", p.tagIds);

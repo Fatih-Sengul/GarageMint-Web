@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
@@ -11,6 +12,8 @@ import NavAuth from "./NavAuth";
 export default function SiteHeader() {
     const isAuthed = useAuthStore((s) => s.isAuthed());
     const [showModal, setShowModal] = useState(false);
+    const [query, setQuery] = useState("");
+    const router = useRouter();
 
     const handleAuctionsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (!isAuthed) {
@@ -40,17 +43,25 @@ export default function SiteHeader() {
 
                     {/* Sağ aksiyonlar */}
                     <div className="flex items-center gap-3">
-                        <div
+                        <form
                             role="search"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                if (query.trim()) {
+                                    router.push(`/search?q=${encodeURIComponent(query)}`);
+                                }
+                            }}
                             className="hidden sm:flex items-center gap-2 rounded-full border border-neutral-200 dark:border-white/10 px-3 py-1.5 bg-white/60 dark:bg-white/5"
                         >
                             <MagnifyingGlassIcon className="h-4 w-4 text-neutral-500 dark:text-neutral-400" aria-hidden />
                             <input
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
                                 placeholder="Modeller, markalar ara…"
                                 className="bg-transparent outline-none text-sm w-48 placeholder:text-neutral-400"
                                 aria-label="Arama"
                             />
-                        </div>
+                        </form>
                         <NavAuth />
                     </div>
                 </div>
