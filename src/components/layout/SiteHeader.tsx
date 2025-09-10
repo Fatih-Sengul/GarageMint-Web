@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MagnifyingGlassIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "next-themes";
@@ -30,7 +31,13 @@ export default function SiteHeader() {
                 <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
                     {/* Marka */}
                     <Link href="/" className="flex items-center gap-2" aria-label="Anasayfa">
-                        <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 shadow-sm ring-1 ring-white/40 dark:ring-white/10" />
+                        <Image
+                            src="/logo.svg"
+                            alt="GarageMint logo"
+                            width={28}
+                            height={28}
+                            className="h-7 w-7 rounded-lg shadow-sm ring-1 ring-white/40 dark:ring-white/10"
+                        />
                         <span className="font-extrabold tracking-tight text-xl">GarageMint</span>
                     </Link>
 
