@@ -1,9 +1,8 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
-import {
-    MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
+import { MagnifyingGlassIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { useTheme } from "next-themes";
 import { useAuthStore } from "@/lib/auth/store";
 import SignupPromptModal from "@/components/auth/SignupPromptModal";
 import NavAuth from "./NavAuth";
@@ -11,6 +10,12 @@ import NavAuth from "./NavAuth";
 export default function SiteHeader() {
     const isAuthed = useAuthStore((s) => s.isAuthed());
     const [showModal, setShowModal] = useState(false);
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => setMounted(true), []);
+
+    const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
     const handleAuctionsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (!isAuthed) {
@@ -51,6 +56,17 @@ export default function SiteHeader() {
                                 aria-label="Arama"
                             />
                         </div>
+                        <button
+                            onClick={toggleTheme}
+                            className="rounded-full p-2 border border-neutral-200 dark:border-white/10 bg-white/60 dark:bg-white/5"
+                            aria-label="Temayı değiştir"
+                        >
+                            {mounted && (theme === "dark" ? (
+                                <SunIcon className="h-5 w-5" />
+                            ) : (
+                                <MoonIcon className="h-5 w-5" />
+                            ))}
+                        </button>
                         <NavAuth />
                     </div>
                 </div>

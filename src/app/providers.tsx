@@ -1,6 +1,6 @@
 
- "use client";
- import { ThemeProvider } from "@primer/react";
+"use client";
+import { ThemeProvider as PrimerThemeProvider } from "@primer/react";
 import {
     MutationCache,
     QueryCache,
@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
  import React from "react";
 import { ToastProvider, useToast } from "@/components/ui/toast";
+import { useTheme } from "next-themes";
 import { AxiosError } from "axios";
  
 function getErrorMessage(err: unknown): string {
@@ -51,11 +52,13 @@ function QueryClientWithToasts({ children }: { children: React.ReactNode }) {
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-     return (
-         <ThemeProvider colorMode="auto">
+    const { resolvedTheme } = useTheme();
+    const colorMode = resolvedTheme === "dark" ? "night" : resolvedTheme === "light" ? "day" : "auto";
+    return (
+        <PrimerThemeProvider colorMode={colorMode}>
             <ToastProvider>
                 <QueryClientWithToasts>{children}</QueryClientWithToasts>
             </ToastProvider>
-         </ThemeProvider>
-     );
- }
+        </PrimerThemeProvider>
+    );
+}
