@@ -14,10 +14,20 @@ export default function ListingsPage() {
     const page = data?.number ?? 0;
     const totalPages = data?.totalPages ?? 0;
 
-    const filters: Filters = useMemo(() => ({
-        type: params.type, priceMin: params.priceMin, priceMax: params.priceMax,
-        sortBy: params.sortBy, sortDir: params.sortDir, size: params.size
-    }), [params]);
+    const filters: Filters = useMemo(
+        () => ({
+            q: params.q,
+            brandIds: params.brandIds,
+            seriesIds: params.seriesIds,
+            type: params.type,
+            priceMin: params.priceMin,
+            priceMax: params.priceMax,
+            sortBy: params.sortBy,
+            sortDir: params.sortDir,
+            size: params.size,
+        }),
+        [params],
+    );
 
     return (
         <main className="mx-auto w-full max-w-[1200px] px-4 py-6 space-y-6">

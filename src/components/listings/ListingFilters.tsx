@@ -5,7 +5,16 @@ import type { ListingsSearchParams } from "@/lib/queries/listings";
 
 export type Filters = Pick<
   ListingsSearchParams,
-  "type" | "priceMin" | "priceMax" | "sortBy" | "sortDir" | "size"
+  |
+    "q"
+    | "brandIds"
+    | "seriesIds"
+    | "type"
+    | "priceMin"
+    | "priceMax"
+    | "sortBy"
+    | "sortDir"
+    | "size"
 >;
 
 interface ListingFiltersProps {
@@ -23,6 +32,52 @@ export default function ListingFilters({
 
   return (
     <div className="grid gap-3 rounded-xl border border-white/10 bg-neutral-900 p-3 sm:grid-cols-3 lg:grid-cols-6">
+      <input
+        type="text"
+        placeholder="Ara"
+        value={local.q ?? ""}
+        onChange={(e) =>
+          setLocal({ ...local, q: e.target.value || undefined })
+        }
+        className="input"
+      />
+
+      <input
+        type="text"
+        placeholder="Marka ID'leri (virgülle)"
+        value={local.brandIds?.join(",") ?? ""}
+        onChange={(e) =>
+          setLocal({
+            ...local,
+            brandIds: e.target.value
+              ? e.target.value
+                  .split(",")
+                  .map((x) => Number(x.trim()))
+                  .filter((n) => !Number.isNaN(n))
+              : undefined,
+          })
+        }
+        className="input"
+      />
+
+      <input
+        type="text"
+        placeholder="Seri ID'leri (virgülle)"
+        value={local.seriesIds?.join(",") ?? ""}
+        onChange={(e) =>
+          setLocal({
+            ...local,
+            seriesIds: e.target.value
+              ? e.target.value
+                  .split(",")
+                  .map((x) => Number(x.trim()))
+                  .filter((n) => !Number.isNaN(n))
+              : undefined,
+          })
+        }
+        className="input"
+      />
+
       <select
         value={local.type ?? ""}
         onChange={(e) =>
@@ -108,6 +163,9 @@ export default function ListingFilters({
         <button
           onClick={() => {
             const reset: Filters = {
+              q: undefined,
+              brandIds: undefined,
+              seriesIds: undefined,
               type: undefined,
               priceMin: undefined,
               priceMax: undefined,
