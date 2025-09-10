@@ -83,13 +83,29 @@ export default function MePage() {
 
                     {/* İlanlarım */}
                     <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-6">
-                        <h2 className="text-xl font-semibold mb-4">İlanlarım</h2>
+                        <header className="mb-4 flex items-center">
+                            <h2 className="text-xl font-semibold">İlanlarım</h2>
+                            <Link
+                                href="/sell"
+                                className="ml-auto inline-flex shrink-0 rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow ring-1 ring-white/30 hover:opacity-95"
+                            >
+                                Yeni İlan Oluştur
+                            </Link>
+                        </header>
                         <MyListingsGrid me={me} />
                     </section>
 
                     {/* Mezatlarım */}
                     <section className="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm p-6">
-                        <h2 className="text-xl font-semibold mb-4">Mezatlarım</h2>
+                        <header className="mb-4 flex items-center">
+                            <h2 className="text-xl font-semibold">Mezatlarım</h2>
+                            <Link
+                                href="/auctions/new"
+                                className="ml-auto inline-flex shrink-0 rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow ring-1 ring-white/30 hover:opacity-95"
+                            >
+                                Yeni Mezat Oluştur
+                            </Link>
+                        </header>
                         <MyAuctionsGrid me={me} />
                     </section>
                 </div>
