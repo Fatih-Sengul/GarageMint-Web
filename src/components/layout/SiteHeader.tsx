@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useState } from "react";
 import {
     MagnifyingGlassIcon,
+    Bars3Icon,
+    XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/lib/auth/store";
 import SignupPromptModal from "@/components/auth/SignupPromptModal";
@@ -11,8 +13,10 @@ import NavAuth from "./NavAuth";
 export default function SiteHeader() {
     const isAuthed = useAuthStore((s) => s.isAuthed());
     const [showModal, setShowModal] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const handleAuctionsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        setMenuOpen(false);
         if (!isAuthed) {
             e.preventDefault();
             setShowModal(true);
@@ -40,6 +44,13 @@ export default function SiteHeader() {
 
                     {/* Sağ aksiyonlar */}
                     <div className="flex items-center gap-3">
+                        <button
+                            className="md:hidden p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-white/10"
+                            onClick={() => setMenuOpen(true)}
+                            aria-label="Menüyü aç"
+                        >
+                            <Bars3Icon className="h-6 w-6" aria-hidden />
+                        </button>
                         <div
                             role="search"
                             className="hidden sm:flex items-center gap-2 rounded-full border border-neutral-200 dark:border-white/10 px-3 py-1.5 bg-white/60 dark:bg-white/5"
@@ -56,6 +67,61 @@ export default function SiteHeader() {
                 </div>
             </header>
             <SignupPromptModal open={showModal} onClose={() => setShowModal(false)} />
+            {menuOpen && (
+                <div className="fixed inset-0 z-50 md:hidden">
+                    <div
+                        className="absolute inset-0 bg-black/50"
+                        onClick={() => setMenuOpen(false)}
+                        aria-hidden
+                    />
+                    <div className="absolute left-0 top-0 h-full w-64 bg-white dark:bg-neutral-900 p-4 shadow-xl">
+                        <button
+                            className="mb-4 p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-white/10"
+                            onClick={() => setMenuOpen(false)}
+                            aria-label="Menüyü kapat"
+                        >
+                            <XMarkIcon className="h-6 w-6" aria-hidden />
+                        </button>
+                        <nav className="flex flex-col gap-4 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+                            <Link
+                                className="hover:text-neutral-900 dark:hover:text-white"
+                                href="/listings"
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                Keşfet
+                            </Link>
+                            <Link
+                                className="hover:text-neutral-900 dark:hover:text-white"
+                                href="/collections"
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                Koleksiyonlar
+                            </Link>
+                            <Link
+                                className="hover:text-neutral-900 dark:hover:text-white"
+                                href="/sell"
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                Satış
+                            </Link>
+                            <Link
+                                className="hover:text-neutral-900 dark:hover:text-white"
+                                href="/auctions"
+                                onClick={handleAuctionsClick}
+                            >
+                                Mezat
+                            </Link>
+                            <Link
+                                className="hover:text-neutral-900 dark:hover:text-white"
+                                href="/about"
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                Hakkımızda
+                            </Link>
+                        </nav>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
